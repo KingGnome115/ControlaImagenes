@@ -1,8 +1,14 @@
 package ventanas;
 
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import ventanas.Principal;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -181,7 +187,32 @@ public class Principal extends javax.swing.JFrame
         }
         lista.setText(s);
 
+        Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
+
     }//GEN-LAST:event_btnRenombrarActionPerformed
+
+    protected void Notificaciones(String titulo, String mensaje)
+    {
+        try
+        {
+            SystemTray tray = SystemTray.getSystemTray();
+
+            Image image = Toolkit.getDefaultToolkit().createImage("some-icon.png");
+
+            TrayIcon trayicon = new TrayIcon(image, "Java AWT Tray Demo");
+
+            trayicon.setImageAutoSize(true);
+
+            trayicon.setToolTip("System tray icon demo");
+
+            tray.add(trayicon);
+
+            trayicon.displayMessage(titulo, mensaje, TrayIcon.MessageType.INFO);
+        } catch (AWTException ex)
+        {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * @param args the command line arguments
