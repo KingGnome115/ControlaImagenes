@@ -8,6 +8,7 @@ import java.awt.TrayIcon;
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import org.apache.commons.io.FilenameUtils;
@@ -85,7 +86,7 @@ public class Principal extends javax.swing.JFrame
         });
 
         Panel.setBorder(javax.swing.BorderFactory.createTitledBorder("Imagenes de la carpeta"));
-        Panel.setLayout(new java.awt.GridLayout(0, 3));
+        Panel.setLayout(new java.awt.GridLayout(0, 3, 50, 30));
         jScrollPane1.setViewportView(Panel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -95,9 +96,9 @@ public class Principal extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTCarpeta, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+                        .addComponent(jTCarpeta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnElegir))
                     .addComponent(jLabel2)
@@ -142,6 +143,7 @@ public class Principal extends javax.swing.JFrame
             jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
         }
         Actualizar();
+        Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
 
     }//GEN-LAST:event_btnElegirActionPerformed
 
@@ -177,21 +179,21 @@ public class Principal extends javax.swing.JFrame
 
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
-    
     private void Actualizar()
     {
         Panel.removeAll();
-        
+
         for (int i = 0; i < Lista.length; i++)
         {
-            JLabel imagen = new JLabel(Lista[i].getName());
+            ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
+            JLabel imagen = new JLabel();
+            imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
             Panel.add(imagen);
             System.out.println(Lista[i].getName());
         }
-        
         Panel.updateUI();
     }
-    
+
     protected void Notificaciones(String titulo, String mensaje)
     {
         try

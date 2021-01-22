@@ -48,9 +48,9 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="444" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
-                      <Component id="jTCarpeta" pref="370" max="32767" attributes="0"/>
+                      <Component id="jTCarpeta" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnElegir" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -119,7 +119,9 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
             <Property name="columns" type="int" value="3"/>
+            <Property name="horizontalGap" type="int" value="50"/>
             <Property name="rows" type="int" value="0"/>
+            <Property name="verticalGap" type="int" value="30"/>
           </Layout>
         </Container>
       </SubComponents>
