@@ -1,9 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ventanas;
+
+import java.io.File;
+import javax.swing.JFileChooser;
+import ventanas.Principal;
 
 /**
  *
@@ -11,6 +10,8 @@ package ventanas;
  */
 public class Principal extends javax.swing.JFrame
 {
+
+    protected File carpetaGeneral = null;
 
     /**
      * Creates new form Principal
@@ -30,21 +31,102 @@ public class Principal extends javax.swing.JFrame
     private void initComponents()
     {
 
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jTCarpeta = new javax.swing.JLabel();
+        btnElegir = new javax.swing.JButton();
+        txtLista = new javax.swing.JScrollPane();
+        lista = new javax.swing.JTextArea();
+
+        jLabel1.setText("jLabel1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jLabel2.setText("Carpeta Actual.- ");
+
+        btnElegir.setText("Elegir");
+        btnElegir.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnElegirActionPerformed(evt);
+            }
+        });
+
+        lista.setColumns(20);
+        lista.setLineWrap(true);
+        lista.setRows(5);
+        txtLista.setViewportView(lista);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(124, 124, 124)
+                                .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnElegir)))
+                        .addGap(0, 118, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(txtLista)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnElegir))
+                .addGap(18, 18, 18)
+                .addComponent(txtLista, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(224, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnElegirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnElegirActionPerformed
+    {//GEN-HEADEREND:event_btnElegirActionPerformed
+
+        JFileChooser carpeta = new JFileChooser();
+        carpeta.setCurrentDirectory(new File("."));
+        carpeta.setDialogTitle("Seleccione la carpeta para trabajar");
+        carpeta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        carpeta.setAcceptAllFileFilterUsed(false);
+
+        int seleccion = carpeta.showOpenDialog(this);
+
+        if (seleccion == JFileChooser.APPROVE_OPTION)
+        {
+            carpetaGeneral = carpeta.getSelectedFile();
+            
+            File[] Lista = carpetaGeneral.listFiles();
+            
+            String s="";
+            for (int i = 0; i < Lista.length; i++)
+            {
+                s+=Lista[i].getPath()+"\n";
+            }
+            lista.setText(s);
+
+            jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+        }
+
+
+    }//GEN-LAST:event_btnElegirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -92,5 +174,11 @@ public class Principal extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnElegir;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jTCarpeta;
+    private javax.swing.JTextArea lista;
+    private javax.swing.JScrollPane txtLista;
     // End of variables declaration//GEN-END:variables
 }
