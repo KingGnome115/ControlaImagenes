@@ -152,20 +152,22 @@ public class Principal extends javax.swing.JFrame
         for (int i = 0; i < Lista.length; i++)
         {
             File tmp;
+            s = Lista[i].getParent() + "/";
             if (s.compareTo("") == 0)
             {
-                s = "00";
+                s += "00";
             } else
             {
                 if (i > 0 && i <= 9)
                 {
-                    s = "0" + i;
+                    s += "0" + i;
                 } else
                 {
-                    s = i + "";
+                    s += i + "";
                 }
             }
-            s+="."+FilenameUtils.getExtension(Lista[i].getName());
+            s += "." + FilenameUtils.getExtension(Lista[i].getName());
+            System.out.println(s);
             tmp = new File(s);
             boolean exito = Lista[i].renameTo(tmp);
             if (exito)
