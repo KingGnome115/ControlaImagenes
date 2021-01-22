@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -40,14 +41,26 @@ public class Principal extends javax.swing.JFrame
     {
 
         jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTCarpeta = new javax.swing.JLabel();
         btnElegir = new javax.swing.JButton();
-        txtLista = new javax.swing.JScrollPane();
-        lista = new javax.swing.JTextArea();
         btnRenombrar = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Panel = new javax.swing.JPanel();
 
         jLabel1.setText("jLabel1");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,11 +75,6 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
-        lista.setColumns(20);
-        lista.setLineWrap(true);
-        lista.setRows(5);
-        txtLista.setViewportView(lista);
-
         btnRenombrar.setText("Renombrar");
         btnRenombrar.addActionListener(new java.awt.event.ActionListener()
         {
@@ -76,29 +84,24 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
+        Panel.setBorder(javax.swing.BorderFactory.createTitledBorder("Imagenes de la carpeta"));
+        Panel.setLayout(new java.awt.GridLayout(0, 3));
+        jScrollPane1.setViewportView(Panel);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel2))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(124, 124, 124)
-                                .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnElegir)))
-                        .addGap(0, 118, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(txtLista))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnRenombrar)))
+                        .addComponent(jTCarpeta, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnElegir))
+                    .addComponent(jLabel2)
+                    .addComponent(btnRenombrar))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -107,14 +110,14 @@ public class Principal extends javax.swing.JFrame
                 .addContainerGap()
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnElegir))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnElegir)
+                    .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(txtLista, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(btnRenombrar)
-                .addContainerGap(174, Short.MAX_VALUE))
+                .addGap(62, 62, 62))
         );
 
         pack();
@@ -129,25 +132,16 @@ public class Principal extends javax.swing.JFrame
         carpeta.setDialogTitle("Seleccione la carpeta para trabajar");
         carpeta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         carpeta.setAcceptAllFileFilterUsed(false);
-
         int seleccion = carpeta.showOpenDialog(this);
-
         if (seleccion == JFileChooser.APPROVE_OPTION)
         {
             carpetaGeneral = carpeta.getSelectedFile();
 
             Lista = carpetaGeneral.listFiles();
 
-            String s = "";
-            for (int i = 0; i < Lista.length; i++)
-            {
-                s += Lista[i].getPath() + "\n";
-            }
-            lista.setText(s);
-
             jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
         }
-
+        Actualizar();
 
     }//GEN-LAST:event_btnElegirActionPerformed
 
@@ -179,18 +173,25 @@ public class Principal extends javax.swing.JFrame
         }
 
         Lista = carpetaGeneral.listFiles();
-        s = "";
-        lista.setText("");
-        for (int i = 0; i < Lista.length; i++)
-        {
-            s += Lista[i].getPath() + "\n";
-        }
-        lista.setText(s);
-
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
 
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
+    
+    private void Actualizar()
+    {
+        Panel.removeAll();
+        
+        for (int i = 0; i < Lista.length; i++)
+        {
+            JLabel imagen = new JLabel(Lista[i].getName());
+            Panel.add(imagen);
+            System.out.println(Lista[i].getName());
+        }
+        
+        Panel.updateUI();
+    }
+    
     protected void Notificaciones(String titulo, String mensaje)
     {
         try
@@ -260,12 +261,13 @@ public class Principal extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel Panel;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnRenombrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jTCarpeta;
-    private javax.swing.JTextArea lista;
-    private javax.swing.JScrollPane txtLista;
     // End of variables declaration//GEN-END:variables
 }
