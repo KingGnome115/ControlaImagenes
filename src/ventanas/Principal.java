@@ -169,12 +169,17 @@ public class Principal extends javax.swing.JFrame
             s += "." + FilenameUtils.getExtension(Lista[i].getName());
             System.out.println(s);
             tmp = new File(s);
-            boolean exito = Lista[i].renameTo(tmp);
-            if (exito)
-            {
-                System.out.println("simona");
-            }
+            Lista[i].renameTo(tmp);
         }
+
+        Lista = carpetaGeneral.listFiles();
+        s = "";
+        lista.setText("");
+        for (int i = 0; i < Lista.length; i++)
+        {
+            s += Lista[i].getPath() + "\n";
+        }
+        lista.setText(s);
 
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
