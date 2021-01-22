@@ -3,6 +3,7 @@ package ventanas;
 import java.io.File;
 import javax.swing.JFileChooser;
 import ventanas.Principal;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  *
@@ -12,6 +13,7 @@ public class Principal extends javax.swing.JFrame
 {
 
     protected File carpetaGeneral = null;
+    protected File[] Lista = null;
 
     /**
      * Creates new form Principal
@@ -37,6 +39,7 @@ public class Principal extends javax.swing.JFrame
         btnElegir = new javax.swing.JButton();
         txtLista = new javax.swing.JScrollPane();
         lista = new javax.swing.JTextArea();
+        btnRenombrar = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -58,6 +61,15 @@ public class Principal extends javax.swing.JFrame
         lista.setRows(5);
         txtLista.setViewportView(lista);
 
+        btnRenombrar.setText("Renombrar");
+        btnRenombrar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnRenombrarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -77,7 +89,10 @@ public class Principal extends javax.swing.JFrame
                         .addGap(0, 118, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(txtLista)))
+                        .addComponent(txtLista))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnRenombrar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -91,7 +106,9 @@ public class Principal extends javax.swing.JFrame
                     .addComponent(btnElegir))
                 .addGap(18, 18, 18)
                 .addComponent(txtLista, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(224, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btnRenombrar)
+                .addContainerGap(174, Short.MAX_VALUE))
         );
 
         pack();
@@ -112,13 +129,13 @@ public class Principal extends javax.swing.JFrame
         if (seleccion == JFileChooser.APPROVE_OPTION)
         {
             carpetaGeneral = carpeta.getSelectedFile();
-            
-            File[] Lista = carpetaGeneral.listFiles();
-            
-            String s="";
+
+            Lista = carpetaGeneral.listFiles();
+
+            String s = "";
             for (int i = 0; i < Lista.length; i++)
             {
-                s+=Lista[i].getPath()+"\n";
+                s += Lista[i].getPath() + "\n";
             }
             lista.setText(s);
 
@@ -127,6 +144,37 @@ public class Principal extends javax.swing.JFrame
 
 
     }//GEN-LAST:event_btnElegirActionPerformed
+
+    private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRenombrarActionPerformed
+    {//GEN-HEADEREND:event_btnRenombrarActionPerformed
+
+        String s = "";
+        for (int i = 0; i < Lista.length; i++)
+        {
+            File tmp;
+            if (s.compareTo("") == 0)
+            {
+                s = "00";
+            } else
+            {
+                if (i > 0 && i <= 9)
+                {
+                    s = "0" + i;
+                } else
+                {
+                    s = i + "";
+                }
+            }
+            s+="."+FilenameUtils.getExtension(Lista[i].getName());
+            tmp = new File(s);
+            boolean exito = Lista[i].renameTo(tmp);
+            if (exito)
+            {
+                System.out.println("simona");
+            }
+        }
+
+    }//GEN-LAST:event_btnRenombrarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -175,6 +223,7 @@ public class Principal extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnElegir;
+    private javax.swing.JButton btnRenombrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jTCarpeta;
