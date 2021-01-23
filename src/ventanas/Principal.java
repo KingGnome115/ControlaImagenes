@@ -6,6 +6,7 @@ import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -22,6 +23,7 @@ public class Principal extends javax.swing.JFrame
 
     protected File carpetaGeneral = null;
     protected File[] Lista = null;
+    protected ArrayList<File> webp = new ArrayList<>();
 
     /**
      * Creates new form Principal
@@ -139,6 +141,7 @@ public class Principal extends javax.swing.JFrame
             carpetaGeneral = carpeta.getSelectedFile();
 
             Lista = carpetaGeneral.listFiles();
+            SepararFormatos();
 
             jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
         }
@@ -155,7 +158,8 @@ public class Principal extends javax.swing.JFrame
         {
             File tmp;
             s = Lista[i].getParent() + "\\";
-            if (s.compareTo("") == 0)
+
+            if (i == 0)
             {
                 s += "00";
             } else
@@ -168,16 +172,60 @@ public class Principal extends javax.swing.JFrame
                     s += i + "";
                 }
             }
-            s += "." + FilenameUtils.getExtension(Lista[i].getName());
+
+            String extencion = FilenameUtils.getExtension(Lista[i].getName());
+
+            s += "." + extencion;
             System.out.println(s);
+
             tmp = new File(s);
             Lista[i].renameTo(tmp);
         }
         Lista = carpetaGeneral.listFiles();
+        SepararFormatos();
+
+        File directorio = new File(carpetaGeneral.getAbsolutePath() + "\\Archivos tipo webp");
+        if (!directorio.exists())
+        {
+            if (directorio.mkdir())
+            {
+                for (int i = 0; i < webp.size(); i++)
+                {
+                    File tmp;
+                    s = directorio.getAbsolutePath() + "\\" + webp.get(i).getName();
+                    tmp = new File(s);
+                    webp.get(i).renameTo(tmp);
+                }
+            }
+        }
+
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
         Actualizar();
 
     }//GEN-LAST:event_btnRenombrarActionPerformed
+
+    private void SepararFormatos()
+    {
+        ArrayList<File> tmp = new ArrayList<>();
+        for (int i = 0; i < Lista.length; i++)
+        {
+            String extencion = FilenameUtils.getExtension(Lista[i].getName());
+            if ((extencion.compareTo("webp") == 0) || extencion.compareTo(".mp4") == 0)
+            {
+                webp.add(Lista[i]);
+            } else
+            {
+                tmp.add(Lista[i]);
+            }
+        }
+        
+        Lista = new File[tmp.size()];
+        for (int i = 0; i < tmp.size(); i++)
+        {
+            Lista[i] = tmp.get(i);
+        }
+        
+    }
 
     private void Actualizar()
     {
@@ -191,7 +239,6 @@ public class Principal extends javax.swing.JFrame
             icono.setImageObserver(imagen);
             imagen.repaint();
             Panel.add(imagen);
-            System.out.println(Lista[i].getName());
         }
         Panel.updateUI();
     }
