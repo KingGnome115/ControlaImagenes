@@ -150,7 +150,10 @@ public class Principal extends javax.swing.JFrame
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         Actualizar();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
+        if (Lista != null)
+        {
+            Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
+        }
 
     }//GEN-LAST:event_btnElegirActionPerformed
 
@@ -162,25 +165,20 @@ public class Principal extends javax.swing.JFrame
         {
             File tmp;
             s = Lista[i].getParent() + "\\";
+            String tam = String.valueOf(Lista.length);
+            String ii= String.valueOf(i);
+            String ceros = "";
 
-            if (i == 0)
+            for (int j = 0; j < tam.length() - ii.length(); j++)
             {
-                s += "00";
-            } else
-            {
-                if (i > 0 && i <= 9)
-                {
-                    s += "0" + i;
-                } else
-                {
-                    s += i + "";
-                }
+                ceros += "0";
             }
+
+            s += ceros + i;
 
             String extencion = FilenameUtils.getExtension(Lista[i].getName());
 
             s += "." + extencion;
-            System.out.println(s);
 
             tmp = new File(s);
             Lista[i].renameTo(tmp);
@@ -260,15 +258,18 @@ public class Principal extends javax.swing.JFrame
     private void Actualizar()
     {
         Panel.removeAll();
-        for (int i = 0; i < Lista.length; i++)
+        if (Lista != null)
         {
-            ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
-            JLabel imagen = new JLabel();
-            imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-            imagen.setText(Lista[i].getName());
-            imagen.setHorizontalTextPosition(JLabel.CENTER);
-            imagen.setVerticalTextPosition(JLabel.BOTTOM);
-            Panel.add(imagen);
+            for (int i = 0; i < Lista.length; i++)
+            {
+                ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
+                JLabel imagen = new JLabel();
+                imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+                imagen.setText(Lista[i].getName());
+                imagen.setHorizontalTextPosition(JLabel.CENTER);
+                imagen.setVerticalTextPosition(JLabel.BOTTOM);
+                Panel.add(imagen);
+            }
         }
         Panel.updateUI();
     }
