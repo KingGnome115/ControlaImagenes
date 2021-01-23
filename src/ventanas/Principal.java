@@ -1,6 +1,7 @@
 package ventanas;
 
 import java.awt.AWTException;
+import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
@@ -141,20 +142,21 @@ public class Principal extends javax.swing.JFrame
         if (seleccion == JFileChooser.APPROVE_OPTION)
         {
             carpetaGeneral = carpeta.getSelectedFile();
-
             Lista = carpetaGeneral.listFiles();
             SepararFormatos();
-
             jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
         }
+
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         Actualizar();
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
 
     }//GEN-LAST:event_btnElegirActionPerformed
 
     private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRenombrarActionPerformed
     {//GEN-HEADEREND:event_btnRenombrarActionPerformed
-
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         String s = "";
         for (int i = 0; i < Lista.length; i++)
         {
@@ -186,55 +188,39 @@ public class Principal extends javax.swing.JFrame
         Lista = carpetaGeneral.listFiles();
         SepararFormatos();
 
-        File directorio = new File(carpetaGeneral.getAbsolutePath() + "\\Archivos tipo webp");
-        if (!directorio.exists())
-        {
-            if (directorio.mkdir())
-            {
-                for (int i = 0; i < webp.size(); i++)
-                {
-                    File tmp;
-                    s = directorio.getAbsolutePath() + "\\" + webp.get(i).getName();
-                    tmp = new File(s);
-                    webp.get(i).renameTo(tmp);
-                }
-            }
-        }
+        CrearCarpetas(webp, "Webp");
+        CrearCarpetas(gif, "Gif");
+        CrearCarpetas(mp4webm, "Videos");
 
-        File directorio2 = new File(carpetaGeneral.getAbsolutePath() + "\\Archivos tipo gif");
-        if (!directorio2.exists())
-        {
-            if (directorio2.mkdir())
-            {
-                for (int i = 0; i < gif.size(); i++)
-                {
-                    File tmp;
-                    s = directorio2.getAbsolutePath() + "\\" + gif.get(i).getName();
-                    tmp = new File(s);
-                    gif.get(i).renameTo(tmp);
-                }
-            }
-        }
-
-        File directorio3 = new File(carpetaGeneral.getAbsolutePath() + "\\Archivos tipo video");
-        if (!directorio3.exists())
-        {
-            if (directorio3.mkdir())
-            {
-                for (int i = 0; i < mp4webm.size(); i++)
-                {
-                    File tmp;
-                    s = directorio3.getAbsolutePath() + "\\" + mp4webm.get(i).getName();
-                    tmp = new File(s);
-                    mp4webm.get(i).renameTo(tmp);
-                }
-            }
-        }
+        Actualizar();
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
-        Actualizar();
+
 
     }//GEN-LAST:event_btnRenombrarActionPerformed
+
+    protected void CrearCarpetas(ArrayList<File> obj, String nombreCarpeta)
+    {
+        if (obj.size() != 0)
+        {
+            String s;
+            File directorio = new File(carpetaGeneral.getAbsolutePath() + "\\" + nombreCarpeta);
+            if (!directorio.exists())
+            {
+                if (directorio.mkdir())
+                {
+                    for (int i = 0; i < obj.size(); i++)
+                    {
+                        File tmp;
+                        s = directorio.getAbsolutePath() + "\\" + obj.get(i).getName();
+                        tmp = new File(s);
+                        obj.get(i).renameTo(tmp);
+                    }
+                }
+            }
+        }
+    }
 
     private void SepararFormatos()
     {
@@ -280,8 +266,7 @@ public class Principal extends javax.swing.JFrame
             ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
             JLabel imagen = new JLabel();
             imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-            icono.setImageObserver(imagen);
-            imagen.repaint();
+            imagen.setText(Lista[i].getName());
             Panel.add(imagen);
         }
         Panel.updateUI();
