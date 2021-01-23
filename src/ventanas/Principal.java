@@ -154,7 +154,7 @@ public class Principal extends javax.swing.JFrame
         for (int i = 0; i < Lista.length; i++)
         {
             File tmp;
-            s = Lista[i].getParent() + "/";
+            s = Lista[i].getParent() + "\\";
             if (s.compareTo("") == 0)
             {
                 s += "00";
@@ -173,9 +173,9 @@ public class Principal extends javax.swing.JFrame
             tmp = new File(s);
             Lista[i].renameTo(tmp);
         }
-
         Lista = carpetaGeneral.listFiles();
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
+        Actualizar();
 
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
@@ -188,6 +188,8 @@ public class Principal extends javax.swing.JFrame
             ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
             JLabel imagen = new JLabel();
             imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+            icono.setImageObserver(imagen);
+            imagen.repaint();
             Panel.add(imagen);
             System.out.println(Lista[i].getName());
         }
