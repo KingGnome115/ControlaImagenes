@@ -260,13 +260,14 @@ public class Principal extends javax.swing.JFrame
     private void Actualizar()
     {
         Panel.removeAll();
-
         for (int i = 0; i < Lista.length; i++)
         {
             ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
             JLabel imagen = new JLabel();
             imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
             imagen.setText(Lista[i].getName());
+            imagen.setHorizontalTextPosition(JLabel.CENTER);
+            imagen.setVerticalTextPosition(JLabel.BOTTOM);
             Panel.add(imagen);
         }
         Panel.updateUI();
