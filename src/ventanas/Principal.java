@@ -24,6 +24,8 @@ public class Principal extends javax.swing.JFrame
     protected File carpetaGeneral = null;
     protected File[] Lista = null;
     protected ArrayList<File> webp = new ArrayList<>();
+    protected ArrayList<File> gif = new ArrayList<>();
+    protected ArrayList<File> mp4webm = new ArrayList<>();
 
     /**
      * Creates new form Principal
@@ -199,6 +201,36 @@ public class Principal extends javax.swing.JFrame
             }
         }
 
+        File directorio2 = new File(carpetaGeneral.getAbsolutePath() + "\\Archivos tipo gif");
+        if (!directorio2.exists())
+        {
+            if (directorio2.mkdir())
+            {
+                for (int i = 0; i < gif.size(); i++)
+                {
+                    File tmp;
+                    s = directorio2.getAbsolutePath() + "\\" + gif.get(i).getName();
+                    tmp = new File(s);
+                    gif.get(i).renameTo(tmp);
+                }
+            }
+        }
+
+        File directorio3 = new File(carpetaGeneral.getAbsolutePath() + "\\Archivos tipo video");
+        if (!directorio3.exists())
+        {
+            if (directorio3.mkdir())
+            {
+                for (int i = 0; i < mp4webm.size(); i++)
+                {
+                    File tmp;
+                    s = directorio3.getAbsolutePath() + "\\" + mp4webm.get(i).getName();
+                    tmp = new File(s);
+                    mp4webm.get(i).renameTo(tmp);
+                }
+            }
+        }
+
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
         Actualizar();
 
@@ -210,21 +242,33 @@ public class Principal extends javax.swing.JFrame
         for (int i = 0; i < Lista.length; i++)
         {
             String extencion = FilenameUtils.getExtension(Lista[i].getName());
-            if ((extencion.compareTo("webp") == 0) || extencion.compareTo(".mp4") == 0)
+            if ((extencion.compareTo("webp") == 0))
             {
                 webp.add(Lista[i]);
             } else
             {
-                tmp.add(Lista[i]);
+                if ((extencion.compareTo("mp4") == 0) || (extencion.compareTo("webm") == 0))
+                {
+                    mp4webm.add(Lista[i]);
+                } else
+                {
+                    if (extencion.compareTo("gif") == 0)
+                    {
+                        gif.add(Lista[i]);
+                    } else
+                    {
+                        tmp.add(Lista[i]);
+                    }
+                }
             }
         }
-        
+
         Lista = new File[tmp.size()];
         for (int i = 0; i < tmp.size(); i++)
         {
             Lista[i] = tmp.get(i);
         }
-        
+
     }
 
     private void Actualizar()
