@@ -54,6 +54,7 @@ public class Principal extends javax.swing.JFrame
         btnRenombrar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
+        btnMostrar = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -94,6 +95,15 @@ public class Principal extends javax.swing.JFrame
         Panel.setLayout(new java.awt.GridLayout(0, 3, 50, 30));
         jScrollPane1.setViewportView(Panel);
 
+        btnMostrar.setText("Mostrar Imagenes");
+        btnMostrar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnMostrarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -107,7 +117,10 @@ public class Principal extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnElegir))
                     .addComponent(jLabel2)
-                    .addComponent(btnRenombrar))
+                    .addComponent(btnRenombrar)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnMostrar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -119,8 +132,10 @@ public class Principal extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnElegir)
                     .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addComponent(btnMostrar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnRenombrar)
                 .addGap(62, 62, 62))
@@ -147,9 +162,6 @@ public class Principal extends javax.swing.JFrame
             jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
         }
 
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        Actualizar();
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         if (Lista != null)
         {
             Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
@@ -190,7 +202,6 @@ public class Principal extends javax.swing.JFrame
         CrearCarpetas(gif, "Gif");
         CrearCarpetas(mp4webm, "Videos");
 
-        Actualizar();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
@@ -198,9 +209,16 @@ public class Principal extends javax.swing.JFrame
 
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
+    private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnMostrarActionPerformed
+    {//GEN-HEADEREND:event_btnMostrarActionPerformed
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        Actualizar();
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_btnMostrarActionPerformed
+
     protected void CrearCarpetas(ArrayList<File> obj, String nombreCarpeta)
     {
-        if (obj.size() != 0)
+        if (!obj.isEmpty())
         {
             String s;
             File directorio = new File(carpetaGeneral.getAbsolutePath() + "\\" + nombreCarpeta);
@@ -345,6 +363,7 @@ public class Principal extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnElegir;
+    private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnRenombrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
