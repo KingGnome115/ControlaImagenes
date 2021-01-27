@@ -179,6 +179,7 @@ public class Principal extends javax.swing.JFrame
         mp4webm = CrearCarpetas(mp4webm, "Videos");
         RenombrarImagenes(gif);
         RenombrarImagenes(mp4webm);
+        RenombrarImagenes(webp);
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
