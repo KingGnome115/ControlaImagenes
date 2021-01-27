@@ -172,41 +172,17 @@ public class Principal extends javax.swing.JFrame
     private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRenombrarActionPerformed
     {//GEN-HEADEREND:event_btnRenombrarActionPerformed
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        String s = "";
-        for (int i = 0; i < Lista.length; i++)
-        {
-            File tmp;
-            s = Lista[i].getParent() + "\\";
-            String tam = String.valueOf(Lista.length);
-            String ii= String.valueOf(i);
-            String ceros = "";
 
-            for (int j = 0; j < tam.length() - ii.length(); j++)
-            {
-                ceros += "0";
-            }
-
-            s += ceros + i;
-
-            String extencion = FilenameUtils.getExtension(Lista[i].getName());
-
-            s += "." + extencion;
-
-            tmp = new File(s);
-            Lista[i].renameTo(tmp);
-        }
-        Lista = carpetaGeneral.listFiles();
-        SepararFormatos();
-
+        RenombrarImagenes();
         CrearCarpetas(webp, "Webp");
         CrearCarpetas(gif, "Gif");
         CrearCarpetas(mp4webm, "Videos");
+        RenombrarImagenes(gif);
+        RenombrarImagenes(mp4webm);
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
-
-
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
     private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnMostrarActionPerformed
@@ -215,6 +191,52 @@ public class Principal extends javax.swing.JFrame
         Actualizar();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_btnMostrarActionPerformed
+
+    protected void RenombrarImagenes(ArrayList<File> obj)
+    {
+        String s = "";
+        for (int i = 0; i < obj.size(); i++)
+        {
+            File tmp;
+            s = obj.get(i).getParent() + "\\";
+            String tam = String.valueOf(obj.size());
+            String ii = String.valueOf(i);
+            String ceros = "";
+            for (int j = 0; j < tam.length() - ii.length(); j++)
+            {
+                ceros += "0";
+            }
+            s += ceros + i;
+            String extencion = FilenameUtils.getExtension(obj.get(i).getName());
+            s += "." + extencion;
+            tmp = new File(s);
+            obj.get(i).renameTo(tmp);
+        }
+    }
+
+    protected void RenombrarImagenes()
+    {
+        String s = "";
+        for (int i = 0; i < Lista.length; i++)
+        {
+            File tmp;
+            s = Lista[i].getParent() + "\\";
+            String tam = String.valueOf(Lista.length);
+            String ii = String.valueOf(i);
+            String ceros = "";
+            for (int j = 0; j < tam.length() - ii.length(); j++)
+            {
+                ceros += "0";
+            }
+            s += ceros + i;
+            String extencion = FilenameUtils.getExtension(Lista[i].getName());
+            s += "." + extencion;
+            tmp = new File(s);
+            Lista[i].renameTo(tmp);
+        }
+        Lista = carpetaGeneral.listFiles();
+        SepararFormatos();
+    }
 
     protected void CrearCarpetas(ArrayList<File> obj, String nombreCarpeta)
     {
@@ -232,6 +254,8 @@ public class Principal extends javax.swing.JFrame
                         s = directorio.getAbsolutePath() + "\\" + obj.get(i).getName();
                         tmp = new File(s);
                         obj.get(i).renameTo(tmp);
+                        System.out.println("tmp: " + tmp.getAbsolutePath());
+                        System.out.println("obj: " + obj.get(i).getAbsolutePath());
                     }
                 }
             }
