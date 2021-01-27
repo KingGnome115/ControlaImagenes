@@ -174,9 +174,9 @@ public class Principal extends javax.swing.JFrame
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         RenombrarImagenes();
-        CrearCarpetas(webp, "Webp");
-        CrearCarpetas(gif, "Gif");
-        CrearCarpetas(mp4webm, "Videos");
+        webp = CrearCarpetas(webp, "Webp");
+        gif = CrearCarpetas(gif, "Gif");
+        mp4webm = CrearCarpetas(mp4webm, "Videos");
         RenombrarImagenes(gif);
         RenombrarImagenes(mp4webm);
 
@@ -238,8 +238,9 @@ public class Principal extends javax.swing.JFrame
         SepararFormatos();
     }
 
-    protected void CrearCarpetas(ArrayList<File> obj, String nombreCarpeta)
+    protected ArrayList CrearCarpetas(ArrayList<File> obj, String nombreCarpeta)
     {
+        ArrayList<File> tm = new ArrayList<>();
         if (!obj.isEmpty())
         {
             String s;
@@ -254,12 +255,12 @@ public class Principal extends javax.swing.JFrame
                         s = directorio.getAbsolutePath() + "\\" + obj.get(i).getName();
                         tmp = new File(s);
                         obj.get(i).renameTo(tmp);
-                        System.out.println("tmp: " + tmp.getAbsolutePath());
-                        System.out.println("obj: " + obj.get(i).getAbsolutePath());
+                        tm.add(tmp);
                     }
                 }
             }
         }
+        return tm;
     }
 
     private void SepararFormatos()
