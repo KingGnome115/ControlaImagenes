@@ -271,7 +271,13 @@ public class Principal extends javax.swing.JFrame implements Runnable
             String tam = String.valueOf(obj.size());
             String ii = String.valueOf(i);
             String ceros = "";
-            for (int j = 0; j < tam.length() - ii.length(); j++)
+            int t = tam.length() - ii.length();
+            System.out.println(t);
+            if (t == 0)
+            {
+                t = 1;
+            }
+            for (int j = 0; j < t; j++)
             {
                 ceros += "0";
             }
@@ -293,10 +299,11 @@ public class Principal extends javax.swing.JFrame implements Runnable
             String tam = String.valueOf(Lista.length);
             String ii = String.valueOf(i);
             String ceros = "";
-            int t=tam.length()-ii.length();
-            if (t==1)
+            int t = tam.length() - ii.length();
+            System.out.println(t);
+            if (t == 0)
             {
-                t=2;
+                t = 1;
             }
             for (int j = 0; j < t; j++)
             {
