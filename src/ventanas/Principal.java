@@ -250,7 +250,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
                 int li = Lista.length;
                 if (li != cantidad)
                 {
-                    RenombrarImagenesParalelo();
+                    RenombrarImagenes();
                     cantidad = li;
                     Actualizar();
                 } else
@@ -293,36 +293,12 @@ public class Principal extends javax.swing.JFrame implements Runnable
             String tam = String.valueOf(Lista.length);
             String ii = String.valueOf(i);
             String ceros = "";
-            for (int j = 0; j < tam.length() - ii.length(); j++)
+            int t=tam.length()-ii.length();
+            if (t==1)
             {
-                ceros += "0";
+                t=2;
             }
-            s += ceros + i;
-            String extencion = FilenameUtils.getExtension(Lista[i].getName());
-            s += "." + extencion;
-            tmp = new File(s);
-            Lista[i].renameTo(tmp);
-        }
-        Lista = carpetaGeneral.listFiles();
-        SepararFormatos();
-    }
-
-    protected void RenombrarImagenesParalelo()
-    {
-        String s = "";
-        for (int i = 0; i < Lista.length; i++)
-        {
-            File tmp;
-            s = Lista[i].getParent() + "\\";
-            String tam = String.valueOf(Lista.length);;
-            if (tam.length() == 1)
-            {
-                tam = String.valueOf(Lista.length + 10);
-            }
-            System.out.println(tam);
-            String ii = String.valueOf(i);
-            String ceros = "";
-            for (int j = 0; j < tam.length() - ii.length(); j++)
+            for (int j = 0; j < t; j++)
             {
                 ceros += "0";
             }
