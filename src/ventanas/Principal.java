@@ -19,14 +19,16 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Kevin
  */
-public class Principal extends javax.swing.JFrame
+public class Principal extends javax.swing.JFrame implements Runnable
 {
-
+    
     protected File carpetaGeneral = null;
     protected File[] Lista = null;
     protected ArrayList<File> webp = new ArrayList<>();
     protected ArrayList<File> gif = new ArrayList<>();
     protected ArrayList<File> mp4webm = new ArrayList<>();
+    protected Thread hilo;
+    private int cantidad;
 
     /**
      * Creates new form Principal
@@ -55,6 +57,7 @@ public class Principal extends javax.swing.JFrame
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
         btnMostrar = new javax.swing.JButton();
+        btnEscuchar = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -104,6 +107,15 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
+        btnEscuchar.setText("Escuchar");
+        btnEscuchar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnEscucharActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -116,11 +128,17 @@ public class Principal extends javax.swing.JFrame
                         .addComponent(jTCarpeta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnElegir))
-                    .addComponent(jLabel2)
-                    .addComponent(btnRenombrar)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnMostrar)))
+                        .addComponent(btnMostrar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnRenombrar)
+                                .addGap(28, 28, 28)
+                                .addComponent(btnEscuchar)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -137,7 +155,9 @@ public class Principal extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnRenombrar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnRenombrar)
+                    .addComponent(btnEscuchar))
                 .addGap(62, 62, 62))
         );
 
@@ -147,7 +167,7 @@ public class Principal extends javax.swing.JFrame
 
     private void btnElegirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnElegirActionPerformed
     {//GEN-HEADEREND:event_btnElegirActionPerformed
-
+        
         JFileChooser carpeta = new JFileChooser();
         carpeta.setCurrentDirectory(new File("."));
         carpeta.setDialogTitle("Seleccione la carpeta para trabajar");
@@ -158,10 +178,14 @@ public class Principal extends javax.swing.JFrame
         {
             carpetaGeneral = carpeta.getSelectedFile();
             Lista = carpetaGeneral.listFiles();
-            SepararFormatos();
-            jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+            if (Lista != null)
+            {
+                SepararFormatos();
+                cantidad = Lista.length;
+                jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+            }
         }
-
+        
         if (Lista != null)
         {
             Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
@@ -172,7 +196,7 @@ public class Principal extends javax.swing.JFrame
     private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRenombrarActionPerformed
     {//GEN-HEADEREND:event_btnRenombrarActionPerformed
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
+        
         RenombrarImagenes();
         webp = CrearCarpetas(webp, "Webp");
         gif = CrearCarpetas(gif, "Gif");
@@ -180,9 +204,9 @@ public class Principal extends javax.swing.JFrame
         RenombrarImagenes(gif);
         RenombrarImagenes(mp4webm);
         RenombrarImagenes(webp);
-
+        
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
+        
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
@@ -191,8 +215,38 @@ public class Principal extends javax.swing.JFrame
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         Actualizar();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + Lista.length);
     }//GEN-LAST:event_btnMostrarActionPerformed
 
+    private void btnEscucharActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnEscucharActionPerformed
+    {//GEN-HEADEREND:event_btnEscucharActionPerformed
+        
+
+    }//GEN-LAST:event_btnEscucharActionPerformed
+    
+    @Override
+    public void run()
+    {
+        Thread current = Thread.currentThread();
+        
+        while (current == hilo)
+        {
+            Lista = carpetaGeneral.listFiles();
+            if (Lista != null)
+            {
+                int li = Lista.length;
+                if (cantidad != li)
+                {
+                    
+                } else
+                {
+                    
+                }
+            }
+            
+        }
+    }
+    
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
         String s = "";
@@ -214,7 +268,7 @@ public class Principal extends javax.swing.JFrame
             obj.get(i).renameTo(tmp);
         }
     }
-
+    
     protected void RenombrarImagenes()
     {
         String s = "";
@@ -238,7 +292,7 @@ public class Principal extends javax.swing.JFrame
         Lista = carpetaGeneral.listFiles();
         SepararFormatos();
     }
-
+    
     protected ArrayList CrearCarpetas(ArrayList<File> obj, String nombreCarpeta)
     {
         ArrayList<File> tm = new ArrayList<>();
@@ -263,7 +317,7 @@ public class Principal extends javax.swing.JFrame
         }
         return tm;
     }
-
+    
     private void SepararFormatos()
     {
         ArrayList<File> tmp = new ArrayList<>();
@@ -290,15 +344,15 @@ public class Principal extends javax.swing.JFrame
                 }
             }
         }
-
+        
         Lista = new File[tmp.size()];
         for (int i = 0; i < tmp.size(); i++)
         {
             Lista[i] = tmp.get(i);
         }
-
+        
     }
-
+    
     private void Actualizar()
     {
         Panel.removeAll();
@@ -317,23 +371,23 @@ public class Principal extends javax.swing.JFrame
         }
         Panel.updateUI();
     }
-
+    
     protected void Notificaciones(String titulo, String mensaje)
     {
         try
         {
             SystemTray tray = SystemTray.getSystemTray();
-
+            
             Image image = Toolkit.getDefaultToolkit().createImage("some-icon.png");
-
+            
             TrayIcon trayicon = new TrayIcon(image, "Java AWT Tray Demo");
-
+            
             trayicon.setImageAutoSize(true);
-
+            
             trayicon.setToolTip("System tray icon demo");
-
+            
             tray.add(trayicon);
-
+            
             trayicon.displayMessage(titulo, mensaje, TrayIcon.MessageType.INFO);
         } catch (AWTException ex)
         {
@@ -389,6 +443,7 @@ public class Principal extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnElegir;
+    private javax.swing.JButton btnEscuchar;
     private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnRenombrar;
     private javax.swing.JLabel jLabel1;
