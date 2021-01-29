@@ -21,7 +21,7 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class Principal extends javax.swing.JFrame implements Runnable
 {
-    
+
     protected File carpetaGeneral = null;
     protected File[] Lista = null;
     protected ArrayList<File> webp = new ArrayList<>();
@@ -29,6 +29,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
     protected ArrayList<File> mp4webm = new ArrayList<>();
     protected Thread hilo;
     private int cantidad;
+    private boolean encendido = false;
 
     /**
      * Creates new form Principal
@@ -36,6 +37,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
     public Principal()
     {
         initComponents();
+        hilo = new Thread(this);
     }
 
     /**
@@ -57,7 +59,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
         btnMostrar = new javax.swing.JButton();
-        btnEscuchar = new javax.swing.JButton();
+        rbnNombrarAuto = new javax.swing.JRadioButton();
 
         jLabel1.setText("jLabel1");
 
@@ -107,12 +109,12 @@ public class Principal extends javax.swing.JFrame implements Runnable
             }
         });
 
-        btnEscuchar.setText("Escuchar");
-        btnEscuchar.addActionListener(new java.awt.event.ActionListener()
+        rbnNombrarAuto.setText("Nombrar Automaticamente");
+        rbnNombrarAuto.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                btnEscucharActionPerformed(evt);
+                rbnNombrarAutoActionPerformed(evt);
             }
         });
 
@@ -136,8 +138,8 @@ public class Principal extends javax.swing.JFrame implements Runnable
                             .addComponent(jLabel2)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnRenombrar)
-                                .addGap(28, 28, 28)
-                                .addComponent(btnEscuchar)))
+                                .addGap(18, 18, 18)
+                                .addComponent(rbnNombrarAuto)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -157,7 +159,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRenombrar)
-                    .addComponent(btnEscuchar))
+                    .addComponent(rbnNombrarAuto))
                 .addGap(62, 62, 62))
         );
 
@@ -167,7 +169,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
 
     private void btnElegirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnElegirActionPerformed
     {//GEN-HEADEREND:event_btnElegirActionPerformed
-        
+
         JFileChooser carpeta = new JFileChooser();
         carpeta.setCurrentDirectory(new File("."));
         carpeta.setDialogTitle("Seleccione la carpeta para trabajar");
@@ -185,7 +187,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
                 jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
             }
         }
-        
+
         if (Lista != null)
         {
             Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
@@ -196,7 +198,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
     private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRenombrarActionPerformed
     {//GEN-HEADEREND:event_btnRenombrarActionPerformed
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        
+
         RenombrarImagenes();
         webp = CrearCarpetas(webp, "Webp");
         gif = CrearCarpetas(gif, "Gif");
@@ -204,9 +206,9 @@ public class Principal extends javax.swing.JFrame implements Runnable
         RenombrarImagenes(gif);
         RenombrarImagenes(mp4webm);
         RenombrarImagenes(webp);
-        
+
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        
+
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
@@ -218,35 +220,47 @@ public class Principal extends javax.swing.JFrame implements Runnable
         Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + Lista.length);
     }//GEN-LAST:event_btnMostrarActionPerformed
 
-    private void btnEscucharActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnEscucharActionPerformed
-    {//GEN-HEADEREND:event_btnEscucharActionPerformed
-        
+    private void rbnNombrarAutoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbnNombrarAutoActionPerformed
+    {//GEN-HEADEREND:event_rbnNombrarAutoActionPerformed
 
-    }//GEN-LAST:event_btnEscucharActionPerformed
-    
+        if (!encendido)
+        {
+            hilo.start();
+        }
+        if (rbnNombrarAuto.isSelected())
+        {
+            encendido = true;
+            Notificaciones("Servicio imagenes", "El servicio para nombrar automaticamente esta activado");
+        } else
+        {
+            encendido = false;
+            Notificaciones("Servicios imagenes", "El servicio se apago");
+        }
+
+    }//GEN-LAST:event_rbnNombrarAutoActionPerformed
+
     @Override
     public void run()
     {
-        Thread current = Thread.currentThread();
-        
-        while (current == hilo)
+        while (encendido)
         {
             Lista = carpetaGeneral.listFiles();
             if (Lista != null)
             {
                 int li = Lista.length;
-                if (cantidad != li)
+                if (li != cantidad)
                 {
-                    
+                    RenombrarImagenesParalelo();
+                    cantidad = li;
+                    Actualizar();
                 } else
                 {
-                    
                 }
             }
-            
         }
+        System.out.println(encendido);
     }
-    
+
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
         String s = "";
@@ -268,7 +282,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
             obj.get(i).renameTo(tmp);
         }
     }
-    
+
     protected void RenombrarImagenes()
     {
         String s = "";
@@ -292,7 +306,36 @@ public class Principal extends javax.swing.JFrame implements Runnable
         Lista = carpetaGeneral.listFiles();
         SepararFormatos();
     }
-    
+
+    protected void RenombrarImagenesParalelo()
+    {
+        String s = "";
+        for (int i = 0; i < Lista.length; i++)
+        {
+            File tmp;
+            s = Lista[i].getParent() + "\\";
+            String tam = String.valueOf(Lista.length);;
+            if (tam.length() == 1)
+            {
+                tam = String.valueOf(Lista.length + 10);
+            }
+            System.out.println(tam);
+            String ii = String.valueOf(i);
+            String ceros = "";
+            for (int j = 0; j < tam.length() - ii.length(); j++)
+            {
+                ceros += "0";
+            }
+            s += ceros + i;
+            String extencion = FilenameUtils.getExtension(Lista[i].getName());
+            s += "." + extencion;
+            tmp = new File(s);
+            Lista[i].renameTo(tmp);
+        }
+        Lista = carpetaGeneral.listFiles();
+        SepararFormatos();
+    }
+
     protected ArrayList CrearCarpetas(ArrayList<File> obj, String nombreCarpeta)
     {
         ArrayList<File> tm = new ArrayList<>();
@@ -317,7 +360,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
         }
         return tm;
     }
-    
+
     private void SepararFormatos()
     {
         ArrayList<File> tmp = new ArrayList<>();
@@ -344,15 +387,15 @@ public class Principal extends javax.swing.JFrame implements Runnable
                 }
             }
         }
-        
+
         Lista = new File[tmp.size()];
         for (int i = 0; i < tmp.size(); i++)
         {
             Lista[i] = tmp.get(i);
         }
-        
+
     }
-    
+
     private void Actualizar()
     {
         Panel.removeAll();
@@ -371,23 +414,23 @@ public class Principal extends javax.swing.JFrame implements Runnable
         }
         Panel.updateUI();
     }
-    
+
     protected void Notificaciones(String titulo, String mensaje)
     {
         try
         {
             SystemTray tray = SystemTray.getSystemTray();
-            
+
             Image image = Toolkit.getDefaultToolkit().createImage("some-icon.png");
-            
+
             TrayIcon trayicon = new TrayIcon(image, "Java AWT Tray Demo");
-            
+
             trayicon.setImageAutoSize(true);
-            
+
             trayicon.setToolTip("System tray icon demo");
-            
+
             tray.add(trayicon);
-            
+
             trayicon.displayMessage(titulo, mensaje, TrayIcon.MessageType.INFO);
         } catch (AWTException ex)
         {
@@ -443,7 +486,6 @@ public class Principal extends javax.swing.JFrame implements Runnable
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnElegir;
-    private javax.swing.JButton btnEscuchar;
     private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnRenombrar;
     private javax.swing.JLabel jLabel1;
@@ -451,5 +493,6 @@ public class Principal extends javax.swing.JFrame implements Runnable
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jTCarpeta;
+    private javax.swing.JRadioButton rbnNombrarAuto;
     // End of variables declaration//GEN-END:variables
 }
