@@ -19,7 +19,7 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Kevin
  */
-public class Principal extends javax.swing.JFrame implements Runnable
+public class ServicioAgregar extends javax.swing.JFrame implements Runnable
 {
 
     protected File carpetaGeneral = null;
@@ -34,7 +34,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
     /**
      * Creates new form Principal
      */
-    public Principal()
+    public ServicioAgregar()
     {
         initComponents();
         hilo = new Thread(this);
@@ -55,11 +55,9 @@ public class Principal extends javax.swing.JFrame implements Runnable
         jLabel2 = new javax.swing.JLabel();
         jTCarpeta = new javax.swing.JLabel();
         btnElegir = new javax.swing.JButton();
-        btnRenombrar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
         btnMostrar = new javax.swing.JButton();
-        rbnNombrarAuto = new javax.swing.JRadioButton();
 
         jLabel1.setText("jLabel1");
 
@@ -87,15 +85,6 @@ public class Principal extends javax.swing.JFrame implements Runnable
             }
         });
 
-        btnRenombrar.setText("Renombrar");
-        btnRenombrar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                btnRenombrarActionPerformed(evt);
-            }
-        });
-
         Panel.setBorder(javax.swing.BorderFactory.createTitledBorder("Imagenes de la carpeta"));
         Panel.setLayout(new java.awt.GridLayout(0, 3, 50, 30));
         jScrollPane1.setViewportView(Panel);
@@ -106,15 +95,6 @@ public class Principal extends javax.swing.JFrame implements Runnable
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
                 btnMostrarActionPerformed(evt);
-            }
-        });
-
-        rbnNombrarAuto.setText("Nombrar Automaticamente");
-        rbnNombrarAuto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                rbnNombrarAutoActionPerformed(evt);
             }
         });
 
@@ -134,13 +114,8 @@ public class Principal extends javax.swing.JFrame implements Runnable
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnMostrar))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnRenombrar)
-                                .addGap(18, 18, 18)
-                                .addComponent(rbnNombrarAuto)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jLabel2)
+                        .addGap(0, 350, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -152,15 +127,11 @@ public class Principal extends javax.swing.JFrame implements Runnable
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnElegir)
                     .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addComponent(btnMostrar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRenombrar)
-                    .addComponent(rbnNombrarAuto))
-                .addGap(62, 62, 62))
+                .addGap(110, 110, 110))
         );
 
         pack();
@@ -195,23 +166,6 @@ public class Principal extends javax.swing.JFrame implements Runnable
 
     }//GEN-LAST:event_btnElegirActionPerformed
 
-    private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRenombrarActionPerformed
-    {//GEN-HEADEREND:event_btnRenombrarActionPerformed
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-        RenombrarImagenes();
-        webp = CrearCarpetas(webp, "Webp");
-        gif = CrearCarpetas(gif, "Gif");
-        mp4webm = CrearCarpetas(mp4webm, "Videos");
-        RenombrarImagenes(gif);
-        RenombrarImagenes(mp4webm);
-        RenombrarImagenes(webp);
-
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-        Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
-    }//GEN-LAST:event_btnRenombrarActionPerformed
-
     private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnMostrarActionPerformed
     {//GEN-HEADEREND:event_btnMostrarActionPerformed
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -219,26 +173,6 @@ public class Principal extends javax.swing.JFrame implements Runnable
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + Lista.length);
     }//GEN-LAST:event_btnMostrarActionPerformed
-
-    private void rbnNombrarAutoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbnNombrarAutoActionPerformed
-    {//GEN-HEADEREND:event_rbnNombrarAutoActionPerformed
-
-        if (!encendido)
-        {
-            hilo.start();
-        }
-        
-        if (rbnNombrarAuto.isSelected())
-        {
-            encendido = true;
-            Notificaciones("Servicio imagenes", "El servicio para nombrar automaticamente esta activado");
-        } else
-        {
-            encendido = false;
-            Notificaciones("Servicios imagenes", "El servicio se apago");
-        }
-
-    }//GEN-LAST:event_rbnNombrarAutoActionPerformed
 
     @Override
     public void run()
@@ -415,7 +349,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
             trayicon.displayMessage(titulo, mensaje, TrayIcon.MessageType.INFO);
         } catch (AWTException ex)
         {
-            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServicioAgregar.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -441,17 +375,18 @@ public class Principal extends javax.swing.JFrame implements Runnable
             }
         } catch (ClassNotFoundException ex)
         {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServicioAgregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex)
         {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServicioAgregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex)
         {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServicioAgregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex)
         {
-            java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ServicioAgregar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
@@ -459,7 +394,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
         {
             public void run()
             {
-                new Principal().setVisible(true);
+                new ServicioAgregar().setVisible(true);
             }
         });
     }
@@ -468,12 +403,10 @@ public class Principal extends javax.swing.JFrame implements Runnable
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnMostrar;
-    private javax.swing.JButton btnRenombrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jTCarpeta;
-    private javax.swing.JRadioButton rbnNombrarAuto;
     // End of variables declaration//GEN-END:variables
 }
