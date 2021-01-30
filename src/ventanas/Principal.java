@@ -27,6 +27,8 @@ public class Principal extends javax.swing.JFrame
     protected ArrayList<File> webp = new ArrayList<>();
     protected ArrayList<File> gif = new ArrayList<>();
     protected ArrayList<File> mp4webm = new ArrayList<>();
+    protected ArrayList<String> label = new ArrayList<>();
+    protected Hilo nuevo;
 
     /**
      * Creates new form Principal
@@ -167,6 +169,8 @@ public class Principal extends javax.swing.JFrame
             {
                 SepararFormatos();
                 jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+                btnMostrar.setEnabled(true);
+                btnRenombrar.setEnabled(true);
             }
         }
 
@@ -319,9 +323,37 @@ public class Principal extends javax.swing.JFrame
 
     }
 
-    private void Actualizar()
+    public void Actualizar()
+    {
+        if (lista != null)
+        {
+            for (int i = 0; i < lista.length; i++)
+            {
+                ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
+                JLabel imagen = new JLabel();
+                imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+                imagen.setText(lista[i].getName());
+                imagen.setHorizontalTextPosition(JLabel.CENTER);
+                imagen.setVerticalTextPosition(JLabel.BOTTOM);
+
+                if (!IsIncluido(imagen))
+                {
+                    Panel.add(imagen);
+                    label.add(imagen.getText());
+                    System.out.println("Se agrego nueva imagen que no estaba incluida =" + imagen.getText());
+                } else
+                {
+                    System.out.println("Imagen ya incluida");
+                }
+                Panel.updateUI();
+            }
+        }
+    }
+
+    public void Actualizar2()
     {
         Panel.removeAll();
+        lista = carpetaGeneral.listFiles();
         if (lista != null)
         {
             for (int i = 0; i < lista.length; i++)
@@ -336,6 +368,18 @@ public class Principal extends javax.swing.JFrame
             }
         }
         Panel.updateUI();
+    }
+
+    public boolean IsIncluido(JLabel Label)
+    {
+        if (!label.isEmpty())
+        {
+            if (label.contains(Label.getText()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void Notificaciones(String titulo, String mensaje)
