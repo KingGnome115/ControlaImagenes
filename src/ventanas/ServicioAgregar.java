@@ -21,14 +21,13 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class ServicioAgregar extends javax.swing.JFrame implements Runnable
 {
-    
+
     protected File carpetaGeneral = null;
     protected File[] Lista = null;
-    protected ArrayList<File> ordenados = new ArrayList<>();
     protected Thread hilo;
     private int cantidad;
     private boolean encendido = false;
-    
+
     /**
      * Creates new form Principal
      */
@@ -166,7 +165,7 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
 
     private void btnElegirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnElegirActionPerformed
     {//GEN-HEADEREND:event_btnElegirActionPerformed
-        
+
         JFileChooser carpeta = new JFileChooser();
         carpeta.setCurrentDirectory(new File("."));
         carpeta.setDialogTitle("Seleccione la carpeta para trabajar");
@@ -176,21 +175,7 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
         if (seleccion == JFileChooser.APPROVE_OPTION)
         {
             carpetaGeneral = carpeta.getSelectedFile();
-            Lista = carpetaGeneral.listFiles();
-            if (Lista != null)
-            {
-                cantidad = Lista.length;
-                for (int i = 0; i < cantidad; i++)
-                {
-                    ordenados.add(Lista[i]);
-                }
-                jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
-            }
-        }
-        
-        if (Lista != null)
-        {
-            Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
+            jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
         }
 
     }//GEN-LAST:event_btnElegirActionPerformed
@@ -205,19 +190,19 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnIniciarActionPerformed
     {//GEN-HEADEREND:event_btnIniciarActionPerformed
-        encendido=true;
+        encendido = true;
         Notificaciones("Servicio", "El servicio esta activo");
         hilo.start();
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFinalizarActionPerformed
     {//GEN-HEADEREND:event_btnFinalizarActionPerformed
-        encendido=false;
+        encendido = false;
         Notificaciones("Servicio", "El servicio finalizo");
         System.exit(0);
-        
+
     }//GEN-LAST:event_btnFinalizarActionPerformed
-    
+
     @Override
     public void run()
     {
@@ -227,39 +212,20 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
             Lista = carpetaGeneral.listFiles();
             if (Lista != null)
             {
-                int li = Lista.length;
-                if (li != cantidad)
-                {
-                    Agregar();
-                    cantidad = li;
-                    Actualizar();
-                }
-            }
-        }
-    }
-    
-    protected void Agregar()
-    {
-        for (File Lista1 : Lista)
-        {
-            if (!ordenados.contains(Lista1))
-            {
-                ordenados.add(Lista1);
                 RenombrarImagenes();
-                System.out.println("Se decto nueva imagen");
-                break;
+                jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
             }
         }
     }
-    
+
     protected void RenombrarImagenes()
     {
         String s = "";
-        for (int i = 0; i < ordenados.size(); i++)
+        for (int i = 0; i < Lista.length; i++)
         {
             File tmp;
-            s = ordenados.get(i).getParent() + "\\";
-            String tam = String.valueOf(ordenados.size());
+            s = Lista[i].getParent() + "\\";
+            String tam = String.valueOf(Lista[i].length());
             String ii = String.valueOf(i);
             String ceros = "";
             int t = tam.length() - ii.length();
@@ -272,14 +238,14 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
                 ceros += "0";
             }
             s += ceros + i;
-            String extencion = FilenameUtils.getExtension(ordenados.get(i).getName());
+            String extencion = FilenameUtils.getExtension(Lista[i].getName());
             s += "." + extencion;
             tmp = new File(s);
             System.out.println(tmp.getAbsoluteFile());
-            ordenados.get(i).renameTo(tmp);
+            Lista[i].renameTo(tmp);
         }
     }
-    
+
     private void Actualizar()
     {
         Panel.removeAll();
@@ -298,23 +264,23 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
         }
         Panel.updateUI();
     }
-    
+
     protected void Notificaciones(String titulo, String mensaje)
     {
         try
         {
             SystemTray tray = SystemTray.getSystemTray();
-            
+
             Image image = Toolkit.getDefaultToolkit().createImage("some-icon.png");
-            
+
             TrayIcon trayicon = new TrayIcon(image, "Java AWT Tray Demo");
-            
+
             trayicon.setImageAutoSize(true);
-            
+
             trayicon.setToolTip("System tray icon demo");
-            
+
             tray.add(trayicon);
-            
+
             trayicon.displayMessage(titulo, mensaje, TrayIcon.MessageType.INFO);
         } catch (AWTException ex)
         {
