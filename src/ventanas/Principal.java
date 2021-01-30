@@ -83,6 +83,7 @@ public class Principal extends javax.swing.JFrame
         });
 
         btnRenombrar.setText("Renombrar");
+        btnRenombrar.setEnabled(false);
         btnRenombrar.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -96,6 +97,7 @@ public class Principal extends javax.swing.JFrame
         jScrollPane1.setViewportView(Panel);
 
         btnMostrar.setText("Mostrar Imagenes");
+        btnMostrar.setEnabled(false);
         btnMostrar.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)

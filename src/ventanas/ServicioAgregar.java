@@ -1,6 +1,7 @@
 package ventanas;
 
 import java.awt.AWTException;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.SystemTray;
@@ -25,6 +26,7 @@ public class ServicioAgregar extends javax.swing.JFrame
     protected File carpetaGeneral = null;
     protected File[] Lista = null;
     protected ArrayList<File> nombrar = new ArrayList<>();
+    protected ArrayList<String> label = new ArrayList<>();
     protected Hilo nuevo;
 
     /**
@@ -53,7 +55,6 @@ public class ServicioAgregar extends javax.swing.JFrame
         btnElegir = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
-        btnMostrar = new javax.swing.JButton();
         btnAgregar = new javax.swing.JButton();
         btnFinalizar = new javax.swing.JButton();
 
@@ -87,16 +88,8 @@ public class ServicioAgregar extends javax.swing.JFrame
         Panel.setLayout(new java.awt.GridLayout(0, 3, 50, 30));
         jScrollPane1.setViewportView(Panel);
 
-        btnMostrar.setText("Mostrar Imagenes");
-        btnMostrar.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                btnMostrarActionPerformed(evt);
-            }
-        });
-
         btnAgregar.setText("Iniciar");
+        btnAgregar.setEnabled(false);
         btnAgregar.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -106,6 +99,7 @@ public class ServicioAgregar extends javax.swing.JFrame
         });
 
         btnFinalizar.setText("Finalizar");
+        btnFinalizar.setEnabled(false);
         btnFinalizar.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
@@ -126,9 +120,6 @@ public class ServicioAgregar extends javax.swing.JFrame
                         .addComponent(jTCarpeta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnElegir))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnMostrar))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -147,9 +138,7 @@ public class ServicioAgregar extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnElegir)
                     .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
-                .addComponent(btnMostrar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -175,17 +164,11 @@ public class ServicioAgregar extends javax.swing.JFrame
         {
             carpetaGeneral = carpeta.getSelectedFile();
             jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+            btnAgregar.setEnabled(true);
+            btnFinalizar.setEnabled(true);
         }
 
     }//GEN-LAST:event_btnElegirActionPerformed
-
-    private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnMostrarActionPerformed
-    {//GEN-HEADEREND:event_btnMostrarActionPerformed
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        Actualizar();
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + nombrar.size());
-    }//GEN-LAST:event_btnMostrarActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAgregarActionPerformed
     {//GEN-HEADEREND:event_btnAgregarActionPerformed
@@ -201,8 +184,10 @@ public class ServicioAgregar extends javax.swing.JFrame
         RenombrarImagenes(nombrar);
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + nombrar.size());
-        Actualizar();
-        
+        Actualizar2();
+        btnAgregar.setEnabled(false);
+        btnFinalizar.setEnabled(false);
+
     }//GEN-LAST:event_btnFinalizarActionPerformed
 
     protected void RenombrarImagenes(ArrayList<File> obj)
@@ -234,7 +219,6 @@ public class ServicioAgregar extends javax.swing.JFrame
 
     public void Actualizar()
     {
-        Panel.removeAll();
         if (!nombrar.isEmpty())
         {
             for (int i = 0; i < nombrar.size(); i++)
@@ -245,10 +229,52 @@ public class ServicioAgregar extends javax.swing.JFrame
                 imagen.setText(nombrar.get(i).getName());
                 imagen.setHorizontalTextPosition(JLabel.CENTER);
                 imagen.setVerticalTextPosition(JLabel.BOTTOM);
+
+                if (!IsIncluido(imagen))
+                {
+                    Panel.add(imagen);
+                    label.add(imagen.getText());
+                    System.out.println("Se agrego nueva imagen que no estaba incluida =" + imagen.getText());
+                } else
+                {
+                    System.out.println("Imagen ya incluida");
+                }
+
+            }
+        }
+        Panel.updateUI();
+    }
+
+    public void Actualizar2()
+    {
+        Panel.removeAll();
+        Lista = carpetaGeneral.listFiles();
+        if (Lista != null)
+        {
+            for (int i = 0; i < Lista.length; i++)
+            {
+                ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
+                JLabel imagen = new JLabel();
+                imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+                imagen.setText(Lista[i].getName());
+                imagen.setHorizontalTextPosition(JLabel.CENTER);
+                imagen.setVerticalTextPosition(JLabel.BOTTOM);
                 Panel.add(imagen);
             }
         }
         Panel.updateUI();
+    }
+
+    public boolean IsIncluido(JLabel Label)
+    {
+        if (!label.isEmpty())
+        {
+            if (label.contains(Label.getText()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void Notificaciones(String titulo, String mensaje)
@@ -325,7 +351,6 @@ public class ServicioAgregar extends javax.swing.JFrame
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnFinalizar;
-    private javax.swing.JButton btnMostrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
