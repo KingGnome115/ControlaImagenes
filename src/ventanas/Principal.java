@@ -19,17 +19,14 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Kevin
  */
-public class Principal extends javax.swing.JFrame implements Runnable
+public class Principal extends javax.swing.JFrame
 {
 
     protected File carpetaGeneral = null;
-    protected File[] Lista = null;
+    protected File[] lista = null;
     protected ArrayList<File> webp = new ArrayList<>();
     protected ArrayList<File> gif = new ArrayList<>();
     protected ArrayList<File> mp4webm = new ArrayList<>();
-    protected Thread hilo;
-    private int cantidad;
-    private boolean encendido = false;
 
     /**
      * Creates new form Principal
@@ -37,7 +34,6 @@ public class Principal extends javax.swing.JFrame implements Runnable
     public Principal()
     {
         initComponents();
-        hilo = new Thread(this);
     }
 
     /**
@@ -59,7 +55,6 @@ public class Principal extends javax.swing.JFrame implements Runnable
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
         btnMostrar = new javax.swing.JButton();
-        rbnNombrarAuto = new javax.swing.JRadioButton();
 
         jLabel1.setText("jLabel1");
 
@@ -109,15 +104,6 @@ public class Principal extends javax.swing.JFrame implements Runnable
             }
         });
 
-        rbnNombrarAuto.setText("Nombrar Automaticamente");
-        rbnNombrarAuto.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                rbnNombrarAutoActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -136,11 +122,8 @@ public class Principal extends javax.swing.JFrame implements Runnable
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnRenombrar)
-                                .addGap(18, 18, 18)
-                                .addComponent(rbnNombrarAuto)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(btnRenombrar))
+                        .addGap(0, 350, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -157,9 +140,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRenombrar)
-                    .addComponent(rbnNombrarAuto))
+                .addComponent(btnRenombrar)
                 .addGap(62, 62, 62))
         );
 
@@ -179,18 +160,17 @@ public class Principal extends javax.swing.JFrame implements Runnable
         if (seleccion == JFileChooser.APPROVE_OPTION)
         {
             carpetaGeneral = carpeta.getSelectedFile();
-            Lista = carpetaGeneral.listFiles();
-            if (Lista != null)
+            lista = carpetaGeneral.listFiles();
+            if (lista != null)
             {
                 SepararFormatos();
-                cantidad = Lista.length;
                 jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
             }
         }
 
-        if (Lista != null)
+        if (lista != null)
         {
-            Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
+            Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + lista.length + " Imagenes");
         }
 
     }//GEN-LAST:event_btnElegirActionPerformed
@@ -209,7 +189,7 @@ public class Principal extends javax.swing.JFrame implements Runnable
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
-        Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + Lista.length);
+        Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + lista.length);
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
     private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnMostrarActionPerformed
@@ -217,48 +197,8 @@ public class Principal extends javax.swing.JFrame implements Runnable
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         Actualizar();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + Lista.length);
+        Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + lista.length);
     }//GEN-LAST:event_btnMostrarActionPerformed
-
-    private void rbnNombrarAutoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_rbnNombrarAutoActionPerformed
-    {//GEN-HEADEREND:event_rbnNombrarAutoActionPerformed
-
-        if (!encendido)
-        {
-            hilo.start();
-        }
-        
-        if (rbnNombrarAuto.isSelected())
-        {
-            encendido = true;
-            Notificaciones("Servicio imagenes", "El servicio para nombrar automaticamente esta activado");
-        } else
-        {
-            encendido = false;
-            Notificaciones("Servicios imagenes", "El servicio se apago");
-        }
-
-    }//GEN-LAST:event_rbnNombrarAutoActionPerformed
-
-    @Override
-    public void run()
-    {
-        while (encendido)
-        {
-            Lista = carpetaGeneral.listFiles();
-            if (Lista != null)
-            {
-                int li = Lista.length;
-                if (li != cantidad)
-                {
-                    System.out.println("Se decto nueva imagen");
-                    RenombrarImagenes();
-                    cantidad = li;
-                    Actualizar();
-                } 
-            }
-        }
-    }
 
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
@@ -290,11 +230,11 @@ public class Principal extends javax.swing.JFrame implements Runnable
     protected void RenombrarImagenes()
     {
         String s = "";
-        for (int i = 0; i < Lista.length; i++)
+        for (int i = 0; i < lista.length; i++)
         {
             File tmp;
-            s = Lista[i].getParent() + "\\";
-            String tam = String.valueOf(Lista.length);
+            s = lista[i].getParent() + "\\";
+            String tam = String.valueOf(lista.length);
             String ii = String.valueOf(i);
             String ceros = "";
             int t = tam.length() - ii.length();
@@ -308,12 +248,12 @@ public class Principal extends javax.swing.JFrame implements Runnable
                 ceros += "0";
             }
             s += ceros + i;
-            String extencion = FilenameUtils.getExtension(Lista[i].getName());
+            String extencion = FilenameUtils.getExtension(lista[i].getName());
             s += "." + extencion;
             tmp = new File(s);
-            Lista[i].renameTo(tmp);
+            lista[i].renameTo(tmp);
         }
-        Lista = carpetaGeneral.listFiles();
+        lista = carpetaGeneral.listFiles();
         SepararFormatos();
     }
 
@@ -345,34 +285,34 @@ public class Principal extends javax.swing.JFrame implements Runnable
     private void SepararFormatos()
     {
         ArrayList<File> tmp = new ArrayList<>();
-        for (int i = 0; i < Lista.length; i++)
+        for (int i = 0; i < lista.length; i++)
         {
-            String extencion = FilenameUtils.getExtension(Lista[i].getName());
+            String extencion = FilenameUtils.getExtension(lista[i].getName());
             if ((extencion.compareTo("webp") == 0))
             {
-                webp.add(Lista[i]);
+                webp.add(lista[i]);
             } else
             {
                 if ((extencion.compareTo("mp4") == 0) || (extencion.compareTo("webm") == 0))
                 {
-                    mp4webm.add(Lista[i]);
+                    mp4webm.add(lista[i]);
                 } else
                 {
                     if (extencion.compareTo("gif") == 0)
                     {
-                        gif.add(Lista[i]);
+                        gif.add(lista[i]);
                     } else
                     {
-                        tmp.add(Lista[i]);
+                        tmp.add(lista[i]);
                     }
                 }
             }
         }
 
-        Lista = new File[tmp.size()];
+        lista = new File[tmp.size()];
         for (int i = 0; i < tmp.size(); i++)
         {
-            Lista[i] = tmp.get(i);
+            lista[i] = tmp.get(i);
         }
 
     }
@@ -380,14 +320,14 @@ public class Principal extends javax.swing.JFrame implements Runnable
     private void Actualizar()
     {
         Panel.removeAll();
-        if (Lista != null)
+        if (lista != null)
         {
-            for (int i = 0; i < Lista.length; i++)
+            for (int i = 0; i < lista.length; i++)
             {
-                ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
+                ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
                 JLabel imagen = new JLabel();
                 imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                imagen.setText(Lista[i].getName());
+                imagen.setText(lista[i].getName());
                 imagen.setHorizontalTextPosition(JLabel.CENTER);
                 imagen.setVerticalTextPosition(JLabel.BOTTOM);
                 Panel.add(imagen);
@@ -474,6 +414,5 @@ public class Principal extends javax.swing.JFrame implements Runnable
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jTCarpeta;
-    private javax.swing.JRadioButton rbnNombrarAuto;
     // End of variables declaration//GEN-END:variables
 }

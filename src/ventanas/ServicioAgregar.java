@@ -21,16 +21,14 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class ServicioAgregar extends javax.swing.JFrame implements Runnable
 {
-
+    
     protected File carpetaGeneral = null;
     protected File[] Lista = null;
-    protected ArrayList<File> webp = new ArrayList<>();
-    protected ArrayList<File> gif = new ArrayList<>();
-    protected ArrayList<File> mp4webm = new ArrayList<>();
+    protected ArrayList<File> ordenados = new ArrayList<>();
     protected Thread hilo;
     private int cantidad;
     private boolean encendido = false;
-
+    
     /**
      * Creates new form Principal
      */
@@ -58,6 +56,8 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
         btnMostrar = new javax.swing.JButton();
+        btnIniciar = new javax.swing.JButton();
+        btnFinalizar = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -98,6 +98,24 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
             }
         });
 
+        btnIniciar.setText("Iniciar");
+        btnIniciar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnIniciarActionPerformed(evt);
+            }
+        });
+
+        btnFinalizar.setText("Finalizar");
+        btnFinalizar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnFinalizarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -115,7 +133,11 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
                         .addComponent(btnMostrar))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addGap(0, 350, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnIniciar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnFinalizar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -131,7 +153,11 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
                 .addComponent(btnMostrar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(110, 110, 110))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnIniciar)
+                    .addComponent(btnFinalizar))
+                .addGap(60, 60, 60))
         );
 
         pack();
@@ -140,7 +166,7 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
 
     private void btnElegirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnElegirActionPerformed
     {//GEN-HEADEREND:event_btnElegirActionPerformed
-
+        
         JFileChooser carpeta = new JFileChooser();
         carpeta.setCurrentDirectory(new File("."));
         carpeta.setDialogTitle("Seleccione la carpeta para trabajar");
@@ -153,12 +179,15 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
             Lista = carpetaGeneral.listFiles();
             if (Lista != null)
             {
-                SepararFormatos();
                 cantidad = Lista.length;
+                for (int i = 0; i < cantidad; i++)
+                {
+                    ordenados.add(Lista[i]);
+                }
                 jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
             }
         }
-
+        
         if (Lista != null)
         {
             Notificaciones("Imagenes de la carpeta " + carpetaGeneral.getName(), "Se cargaron un total de " + Lista.length + " Imagenes");
@@ -174,9 +203,25 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
         Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + Lista.length);
     }//GEN-LAST:event_btnMostrarActionPerformed
 
+    private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnIniciarActionPerformed
+    {//GEN-HEADEREND:event_btnIniciarActionPerformed
+        encendido=true;
+        Notificaciones("Servicio", "El servicio esta activo");
+        hilo.start();
+    }//GEN-LAST:event_btnIniciarActionPerformed
+
+    private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFinalizarActionPerformed
+    {//GEN-HEADEREND:event_btnFinalizarActionPerformed
+        encendido=false;
+        Notificaciones("Servicio", "El servicio finalizo");
+        System.exit(0);
+        
+    }//GEN-LAST:event_btnFinalizarActionPerformed
+    
     @Override
     public void run()
     {
+        System.out.println("Empece hilo");
         while (encendido)
         {
             Lista = carpetaGeneral.listFiles();
@@ -185,54 +230,39 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
                 int li = Lista.length;
                 if (li != cantidad)
                 {
-                    System.out.println("Se decto nueva imagen");
-                    RenombrarImagenes();
+                    Agregar();
                     cantidad = li;
                     Actualizar();
-                } 
+                }
             }
         }
     }
-
-    protected void RenombrarImagenes(ArrayList<File> obj)
+    
+    protected void Agregar()
     {
-        String s = "";
-        for (int i = 0; i < obj.size(); i++)
+        for (File Lista1 : Lista)
         {
-            File tmp;
-            s = obj.get(i).getParent() + "\\";
-            String tam = String.valueOf(obj.size());
-            String ii = String.valueOf(i);
-            String ceros = "";
-            int t = tam.length() - ii.length();
-            if (t == 0)
+            if (!ordenados.contains(Lista1))
             {
-                t = 1;
+                ordenados.add(Lista1);
+                RenombrarImagenes();
+                System.out.println("Se decto nueva imagen");
+                break;
             }
-            for (int j = 0; j < t; j++)
-            {
-                ceros += "0";
-            }
-            s += ceros + i;
-            String extencion = FilenameUtils.getExtension(obj.get(i).getName());
-            s += "." + extencion;
-            tmp = new File(s);
-            obj.get(i).renameTo(tmp);
         }
     }
-
+    
     protected void RenombrarImagenes()
     {
         String s = "";
-        for (int i = 0; i < Lista.length; i++)
+        for (int i = 0; i < ordenados.size(); i++)
         {
             File tmp;
-            s = Lista[i].getParent() + "\\";
-            String tam = String.valueOf(Lista.length);
+            s = ordenados.get(i).getParent() + "\\";
+            String tam = String.valueOf(ordenados.size());
             String ii = String.valueOf(i);
             String ceros = "";
             int t = tam.length() - ii.length();
-            System.out.println(t);
             if (t == 0)
             {
                 t = 1;
@@ -242,75 +272,14 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
                 ceros += "0";
             }
             s += ceros + i;
-            String extencion = FilenameUtils.getExtension(Lista[i].getName());
+            String extencion = FilenameUtils.getExtension(ordenados.get(i).getName());
             s += "." + extencion;
             tmp = new File(s);
-            Lista[i].renameTo(tmp);
+            System.out.println(tmp.getAbsoluteFile());
+            ordenados.get(i).renameTo(tmp);
         }
-        Lista = carpetaGeneral.listFiles();
-        SepararFormatos();
     }
-
-    protected ArrayList CrearCarpetas(ArrayList<File> obj, String nombreCarpeta)
-    {
-        ArrayList<File> tm = new ArrayList<>();
-        if (!obj.isEmpty())
-        {
-            String s;
-            File directorio = new File(carpetaGeneral.getAbsolutePath() + "\\" + nombreCarpeta);
-            if (!directorio.exists())
-            {
-                if (directorio.mkdir())
-                {
-                    for (int i = 0; i < obj.size(); i++)
-                    {
-                        File tmp;
-                        s = directorio.getAbsolutePath() + "\\" + obj.get(i).getName();
-                        tmp = new File(s);
-                        obj.get(i).renameTo(tmp);
-                        tm.add(tmp);
-                    }
-                }
-            }
-        }
-        return tm;
-    }
-
-    private void SepararFormatos()
-    {
-        ArrayList<File> tmp = new ArrayList<>();
-        for (int i = 0; i < Lista.length; i++)
-        {
-            String extencion = FilenameUtils.getExtension(Lista[i].getName());
-            if ((extencion.compareTo("webp") == 0))
-            {
-                webp.add(Lista[i]);
-            } else
-            {
-                if ((extencion.compareTo("mp4") == 0) || (extencion.compareTo("webm") == 0))
-                {
-                    mp4webm.add(Lista[i]);
-                } else
-                {
-                    if (extencion.compareTo("gif") == 0)
-                    {
-                        gif.add(Lista[i]);
-                    } else
-                    {
-                        tmp.add(Lista[i]);
-                    }
-                }
-            }
-        }
-
-        Lista = new File[tmp.size()];
-        for (int i = 0; i < tmp.size(); i++)
-        {
-            Lista[i] = tmp.get(i);
-        }
-
-    }
-
+    
     private void Actualizar()
     {
         Panel.removeAll();
@@ -329,23 +298,23 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
         }
         Panel.updateUI();
     }
-
+    
     protected void Notificaciones(String titulo, String mensaje)
     {
         try
         {
             SystemTray tray = SystemTray.getSystemTray();
-
+            
             Image image = Toolkit.getDefaultToolkit().createImage("some-icon.png");
-
+            
             TrayIcon trayicon = new TrayIcon(image, "Java AWT Tray Demo");
-
+            
             trayicon.setImageAutoSize(true);
-
+            
             trayicon.setToolTip("System tray icon demo");
-
+            
             tray.add(trayicon);
-
+            
             trayicon.displayMessage(titulo, mensaje, TrayIcon.MessageType.INFO);
         } catch (AWTException ex)
         {
@@ -402,6 +371,8 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnElegir;
+    private javax.swing.JButton btnFinalizar;
+    private javax.swing.JButton btnIniciar;
     private javax.swing.JButton btnMostrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
