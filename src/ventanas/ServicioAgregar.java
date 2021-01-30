@@ -19,13 +19,12 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Kevin
  */
-public class ServicioAgregar extends javax.swing.JFrame implements Runnable
+public class ServicioAgregar extends javax.swing.JFrame
 {
 
     protected File carpetaGeneral = null;
     protected File[] Lista = null;
-    protected Thread hilo;
-    private int cantidad;
+    protected ArrayList<File> nombrar = new ArrayList<>();
 
     /**
      * Creates new form Principal
@@ -33,7 +32,6 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
     public ServicioAgregar()
     {
         initComponents();
-        hilo = new Thread(this);
     }
 
     /**
@@ -54,8 +52,8 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
         btnMostrar = new javax.swing.JButton();
-        btnIniciar = new javax.swing.JButton();
-        btnFinalizar = new javax.swing.JButton();
+        btnAgregar = new javax.swing.JButton();
+        btnNombrar = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -96,21 +94,21 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
             }
         });
 
-        btnIniciar.setText("Iniciar");
-        btnIniciar.addActionListener(new java.awt.event.ActionListener()
+        btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                btnIniciarActionPerformed(evt);
+                btnAgregarActionPerformed(evt);
             }
         });
 
-        btnFinalizar.setText("Finalizar");
-        btnFinalizar.addActionListener(new java.awt.event.ActionListener()
+        btnNombrar.setText("Nombrar");
+        btnNombrar.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                btnFinalizarActionPerformed(evt);
+                btnNombrarActionPerformed(evt);
             }
         });
 
@@ -133,9 +131,9 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnIniciar)
+                        .addComponent(btnAgregar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnFinalizar)))
+                        .addComponent(btnNombrar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -153,8 +151,8 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnIniciar)
-                    .addComponent(btnFinalizar))
+                    .addComponent(btnAgregar)
+                    .addComponent(btnNombrar))
                 .addGap(60, 60, 60))
         );
 
@@ -187,58 +185,38 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
         Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + Lista.length);
     }//GEN-LAST:event_btnMostrarActionPerformed
 
-    private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnIniciarActionPerformed
-    {//GEN-HEADEREND:event_btnIniciarActionPerformed
-        Notificaciones("Servicio", "El servicio esta activo");
-        hilo.start();
-    }//GEN-LAST:event_btnIniciarActionPerformed
-
-    private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFinalizarActionPerformed
-    {//GEN-HEADEREND:event_btnFinalizarActionPerformed
-        Notificaciones("Servicio", "El servicio finalizo");
-        System.exit(0);
-
-    }//GEN-LAST:event_btnFinalizarActionPerformed
-
-    @Override
-    public void run()
-    {
-        System.out.println("Empece hilo");
-        while (true)
-        {
-            Lista = carpetaGeneral.listFiles();
-            if (Lista != null)
-            {
-                int li = Lista.length;
-                if (li != cantidad)
-                {
-                    RenombrarImagenes();
-                    cantidad = li;
-                }
-                jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
-            } else
-            {
-                cantidad = 0;
-            }
-        }
-    }
-
-    protected void RenombrarImagenes()
-    {
-        try
-        {
-            Thread.sleep(1500);
-        } catch (InterruptedException ex)
-        {
-            Logger.getLogger(ServicioAgregar.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String s = "";
-        System.out.println(Lista.length + " Imagenes vistas");
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAgregarActionPerformed
+    {//GEN-HEADEREND:event_btnAgregarActionPerformed
+        Lista = carpetaGeneral.listFiles();
         for (int i = 0; i < Lista.length; i++)
         {
+            if (!nombrar.contains(Lista[i]))
+            {
+                nombrar.add(Lista[i]);
+            }
+        }
+        Actualizar();
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void btnNombrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnNombrarActionPerformed
+    {//GEN-HEADEREND:event_btnNombrarActionPerformed
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+        RenombrarImagenes(nombrar);
+        
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+        Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + nombrar.size());
+    }//GEN-LAST:event_btnNombrarActionPerformed
+
+    protected void RenombrarImagenes(ArrayList<File> obj)
+    {
+        String s = "";
+        for (int i = 0; i < obj.size(); i++)
+        {
             File tmp;
-            s = Lista[i].getParent() + "\\";
-            String tam = String.valueOf(Lista.length);
+            s = obj.get(i).getParent() + "\\";
+            String tam = String.valueOf(obj.size());
             String ii = String.valueOf(i);
             String ceros = "";
             int t = tam.length() - ii.length();
@@ -251,27 +229,24 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
                 ceros += "0";
             }
             s += ceros + i;
-            String extencion = FilenameUtils.getExtension(Lista[i].getName());
+            String extencion = FilenameUtils.getExtension(obj.get(i).getName());
             s += "." + extencion;
             tmp = new File(s);
-            System.out.println(s + "\n-------------------------------");
-            Lista[i].renameTo(tmp);
+            obj.get(i).renameTo(tmp);
         }
-        Actualizar();
-        Lista = null;
     }
 
     private void Actualizar()
     {
         Panel.removeAll();
-        if (Lista != null)
+        if (!nombrar.isEmpty())
         {
-            for (int i = 0; i < Lista.length; i++)
+            for (int i = 0; i < nombrar.size(); i++)
             {
-                ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
+                ImageIcon icono = new ImageIcon(nombrar.get(i).getAbsolutePath());
                 JLabel imagen = new JLabel();
                 imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                imagen.setText(Lista[i].getName());
+                imagen.setText(nombrar.get(i).getName());
                 imagen.setHorizontalTextPosition(JLabel.CENTER);
                 imagen.setVerticalTextPosition(JLabel.BOTTOM);
                 Panel.add(imagen);
@@ -351,10 +326,10 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
+    private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnElegir;
-    private javax.swing.JButton btnFinalizar;
-    private javax.swing.JButton btnIniciar;
     private javax.swing.JButton btnMostrar;
+    private javax.swing.JButton btnNombrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
