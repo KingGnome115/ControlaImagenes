@@ -26,7 +26,6 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
     protected File[] Lista = null;
     protected Thread hilo;
     private int cantidad;
-    private boolean encendido = false;
 
     /**
      * Creates new form Principal
@@ -190,14 +189,12 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnIniciarActionPerformed
     {//GEN-HEADEREND:event_btnIniciarActionPerformed
-        encendido = true;
         Notificaciones("Servicio", "El servicio esta activo");
         hilo.start();
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFinalizarActionPerformed
     {//GEN-HEADEREND:event_btnFinalizarActionPerformed
-        encendido = false;
         Notificaciones("Servicio", "El servicio finalizo");
         System.exit(0);
 
@@ -207,25 +204,41 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
     public void run()
     {
         System.out.println("Empece hilo");
-        while (encendido)
+        while (true)
         {
             Lista = carpetaGeneral.listFiles();
             if (Lista != null)
             {
-                RenombrarImagenes();
+                int li = Lista.length;
+                if (li != cantidad)
+                {
+                    RenombrarImagenes();
+                    cantidad = li;
+                }
                 jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+            } else
+            {
+                cantidad = 0;
             }
         }
     }
 
     protected void RenombrarImagenes()
     {
+        try
+        {
+            Thread.sleep(1500);
+        } catch (InterruptedException ex)
+        {
+            Logger.getLogger(ServicioAgregar.class.getName()).log(Level.SEVERE, null, ex);
+        }
         String s = "";
+        System.out.println(Lista.length + " Imagenes vistas");
         for (int i = 0; i < Lista.length; i++)
         {
             File tmp;
             s = Lista[i].getParent() + "\\";
-            String tam = String.valueOf(Lista[i].length());
+            String tam = String.valueOf(Lista.length);
             String ii = String.valueOf(i);
             String ceros = "";
             int t = tam.length() - ii.length();
@@ -241,9 +254,11 @@ public class ServicioAgregar extends javax.swing.JFrame implements Runnable
             String extencion = FilenameUtils.getExtension(Lista[i].getName());
             s += "." + extencion;
             tmp = new File(s);
-            System.out.println(tmp.getAbsoluteFile());
+            System.out.println(s + "\n-------------------------------");
             Lista[i].renameTo(tmp);
         }
+        Actualizar();
+        Lista = null;
     }
 
     private void Actualizar()
