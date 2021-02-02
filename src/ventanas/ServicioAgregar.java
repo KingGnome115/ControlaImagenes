@@ -1,7 +1,6 @@
 package ventanas;
 
 import java.awt.AWTException;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.SystemTray;
