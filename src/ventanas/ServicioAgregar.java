@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -56,6 +57,7 @@ public class ServicioAgregar extends javax.swing.JFrame
         Panel = new javax.swing.JPanel();
         btnAgregar = new javax.swing.JButton();
         btnFinalizar = new javax.swing.JButton();
+        btnCrear = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -107,25 +109,38 @@ public class ServicioAgregar extends javax.swing.JFrame
             }
         });
 
+        btnCrear.setText("Crear carpeta");
+        btnCrear.setEnabled(false);
+        btnCrear.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnCrearActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 719, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jTCarpeta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnElegir))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAgregar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnFinalizar)))
+                        .addComponent(btnFinalizar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnCrear)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -137,13 +152,15 @@ public class ServicioAgregar extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnElegir)
                     .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnCrear)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAgregar)
                     .addComponent(btnFinalizar))
-                .addGap(60, 60, 60))
+                .addGap(36, 36, 36))
         );
 
         pack();
@@ -165,6 +182,7 @@ public class ServicioAgregar extends javax.swing.JFrame
             jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
             btnAgregar.setEnabled(true);
             btnFinalizar.setEnabled(true);
+            btnCrear.setEnabled(true);
         }
 
     }//GEN-LAST:event_btnElegirActionPerformed
@@ -189,6 +207,23 @@ public class ServicioAgregar extends javax.swing.JFrame
 
     }//GEN-LAST:event_btnFinalizarActionPerformed
 
+    private void btnCrearActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCrearActionPerformed
+    {//GEN-HEADEREND:event_btnCrearActionPerformed
+
+        if (carpetaGeneral == null)
+        {
+            btnElegirActionPerformed(evt);
+        }
+        String nombre = JOptionPane.showInputDialog("Nombre de la carpeta");
+        File directorio = new File(carpetaGeneral.getAbsolutePath() + "\\" + nombre);
+        if (!directorio.exists())
+        {
+            directorio.mkdir();
+            carpetaGeneral = directorio;
+        }
+
+    }//GEN-LAST:event_btnCrearActionPerformed
+
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
         String s = "";
@@ -200,7 +235,7 @@ public class ServicioAgregar extends javax.swing.JFrame
             String ii = String.valueOf(i);
             String ceros = "";
             int t = tam.length() - ii.length();
-            if (t == 0)
+            if (t == 0 && ii.length() == 1)
             {
                 t = 1;
             }
@@ -348,6 +383,7 @@ public class ServicioAgregar extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnFinalizar;
     private javax.swing.JLabel jLabel1;

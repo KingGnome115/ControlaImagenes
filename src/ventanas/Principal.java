@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -57,6 +58,7 @@ public class Principal extends javax.swing.JFrame
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
         btnMostrar = new javax.swing.JButton();
+        btnCrear = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -108,6 +110,16 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
+        btnCrear.setText("Crear carpeta");
+        btnCrear.setEnabled(false);
+        btnCrear.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnCrearActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -121,7 +133,8 @@ public class Principal extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnElegir))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnCrear)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnMostrar))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -140,7 +153,9 @@ public class Principal extends javax.swing.JFrame
                     .addComponent(btnElegir)
                     .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                .addComponent(btnMostrar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnMostrar)
+                    .addComponent(btnCrear))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -171,6 +186,7 @@ public class Principal extends javax.swing.JFrame
                 jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
                 btnMostrar.setEnabled(true);
                 btnRenombrar.setEnabled(true);
+                btnCrear.setEnabled(true);
             }
         }
 
@@ -206,6 +222,22 @@ public class Principal extends javax.swing.JFrame
         Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + lista.length);
     }//GEN-LAST:event_btnMostrarActionPerformed
 
+    private void btnCrearActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCrearActionPerformed
+    {//GEN-HEADEREND:event_btnCrearActionPerformed
+
+        if (carpetaGeneral == null)
+        {
+            btnElegirActionPerformed(evt);
+        }
+        String nombre = JOptionPane.showInputDialog("Nombre de la carpeta");
+        File directorio = new File(carpetaGeneral.getAbsolutePath() + "\\" + nombre);
+            if (!directorio.exists())
+            {
+                directorio.mkdir();
+                carpetaGeneral = directorio;
+            }
+    }//GEN-LAST:event_btnCrearActionPerformed
+
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
         String s = "";
@@ -217,7 +249,7 @@ public class Principal extends javax.swing.JFrame
             String ii = String.valueOf(i);
             String ceros = "";
             int t = tam.length() - ii.length();
-            if (t == 0)
+            if (t == 0 && ii.length() == 1)
             {
                 t = 1;
             }
@@ -245,7 +277,7 @@ public class Principal extends javax.swing.JFrame
             String ceros = "";
             int t = tam.length() - ii.length();
             System.out.println(t);
-            if (t == 0)
+            if (t == 0 && ii.length() == 1)
             {
                 t = 1;
             }
@@ -452,6 +484,7 @@ public class Principal extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
+    private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnRenombrar;
