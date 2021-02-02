@@ -58,6 +58,7 @@ public class ServicioAgregar extends javax.swing.JFrame
         btnAgregar = new javax.swing.JButton();
         btnFinalizar = new javax.swing.JButton();
         btnCrear = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -119,6 +120,15 @@ public class ServicioAgregar extends javax.swing.JFrame
             }
         });
 
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnSalirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -142,6 +152,10 @@ public class ServicioAgregar extends javax.swing.JFrame
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCrear)))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSalir)
+                .addGap(330, 330, 330))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,7 +174,8 @@ public class ServicioAgregar extends javax.swing.JFrame
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAgregar)
                     .addComponent(btnFinalizar))
-                .addGap(36, 36, 36))
+                .addGap(4, 4, 4)
+                .addComponent(btnSalir))
         );
 
         pack();
@@ -220,9 +235,16 @@ public class ServicioAgregar extends javax.swing.JFrame
         {
             directorio.mkdir();
             carpetaGeneral = directorio;
+            jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
         }
 
     }//GEN-LAST:event_btnCrearActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalirActionPerformed
+    {//GEN-HEADEREND:event_btnSalirActionPerformed
+        new Menu().setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnSalirActionPerformed
 
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
@@ -386,6 +408,7 @@ public class ServicioAgregar extends javax.swing.JFrame
     private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnFinalizar;
+    private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
