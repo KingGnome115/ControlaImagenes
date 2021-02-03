@@ -217,6 +217,7 @@ public class Principal extends javax.swing.JFrame
     private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnMostrarActionPerformed
     {//GEN-HEADEREND:event_btnMostrarActionPerformed
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        Panel.removeAll();
         Actualizar();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + lista.length);
@@ -231,11 +232,11 @@ public class Principal extends javax.swing.JFrame
         }
         String nombre = JOptionPane.showInputDialog("Nombre de la carpeta");
         File directorio = new File(carpetaGeneral.getAbsolutePath() + "\\" + nombre);
-            if (!directorio.exists())
-            {
-                directorio.mkdir();
-                carpetaGeneral = directorio;
-            }
+        if (!directorio.exists())
+        {
+            directorio.mkdir();
+            carpetaGeneral = directorio;
+        }
     }//GEN-LAST:event_btnCrearActionPerformed
 
     protected void RenombrarImagenes(ArrayList<File> obj)
@@ -270,26 +271,30 @@ public class Principal extends javax.swing.JFrame
         String s = "";
         for (int i = 0; i < lista.length; i++)
         {
-            File tmp;
-            s = lista[i].getParent() + "\\";
-            String tam = String.valueOf(lista.length);
-            String ii = String.valueOf(i);
-            String ceros = "";
-            int t = tam.length() - ii.length();
-            System.out.println(t);
-            if (t == 0 && ii.length() == 1)
+
+            if (!lista[i].isDirectory())
             {
-                t = 1;
+                File tmp;
+                s = lista[i].getParent() + "\\";
+                String tam = String.valueOf(lista.length);
+                String ii = String.valueOf(i);
+                String ceros = "";
+                int t = tam.length() - ii.length();
+                if (t == 0 && ii.length() == 1)
+                {
+                    t = 1;
+                }
+                for (int j = 0; j < t; j++)
+                {
+                    ceros += "0";
+                }
+                s += ceros + i;
+                String extencion = FilenameUtils.getExtension(lista[i].getName());
+                s += "." + extencion;
+                tmp = new File(s);
+                lista[i].renameTo(tmp);
             }
-            for (int j = 0; j < t; j++)
-            {
-                ceros += "0";
-            }
-            s += ceros + i;
-            String extencion = FilenameUtils.getExtension(lista[i].getName());
-            s += "." + extencion;
-            tmp = new File(s);
-            lista[i].renameTo(tmp);
+
         }
         lista = carpetaGeneral.listFiles();
         SepararFormatos();
@@ -361,23 +366,26 @@ public class Principal extends javax.swing.JFrame
         {
             for (int i = 0; i < lista.length; i++)
             {
-                ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
-                JLabel imagen = new JLabel();
-                imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                imagen.setText(lista[i].getName());
-                imagen.setHorizontalTextPosition(JLabel.CENTER);
-                imagen.setVerticalTextPosition(JLabel.BOTTOM);
+                if (!lista[i].isDirectory())
+                {
+                    ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
+                    JLabel imagen = new JLabel();
+                    imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+                    imagen.setText(lista[i].getName());
+                    imagen.setHorizontalTextPosition(JLabel.CENTER);
+                    imagen.setVerticalTextPosition(JLabel.BOTTOM);
 
-                if (!IsIncluido(imagen))
-                {
-                    Panel.add(imagen);
-                    label.add(imagen.getText());
-                    System.out.println("Se agrego nueva imagen que no estaba incluida =" + imagen.getText());
-                } else
-                {
-                    System.out.println("Imagen ya incluida");
+                    if (!IsIncluido(imagen))
+                    {
+                        Panel.add(imagen);
+                        label.add(imagen.getText());
+                        System.out.println("Se agrego nueva imagen que no estaba incluida =" + imagen.getText());
+                    } else
+                    {
+                        System.out.println("Imagen ya incluida");
+                    }
+                    Panel.updateUI();
                 }
-                Panel.updateUI();
             }
         }
     }
