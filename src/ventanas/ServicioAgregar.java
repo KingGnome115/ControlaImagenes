@@ -279,23 +279,17 @@ public class ServicioAgregar extends javax.swing.JFrame
         {
             for (int i = 0; i < nombrar.size(); i++)
             {
-                ImageIcon icono = new ImageIcon(nombrar.get(i).getAbsolutePath());
-                JLabel imagen = new JLabel();
-                imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                imagen.setText(nombrar.get(i).getName());
-                imagen.setHorizontalTextPosition(JLabel.CENTER);
-                imagen.setVerticalTextPosition(JLabel.BOTTOM);
-
-                if (!IsIncluido(imagen))
+                if (!IsIncluido(nombrar.get(i).getName()))
                 {
+                    ImageIcon icono = new ImageIcon(nombrar.get(i).getAbsolutePath());
+                    JLabel imagen = new JLabel();
+                    imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+                    imagen.setText(nombrar.get(i).getName());
+                    imagen.setHorizontalTextPosition(JLabel.CENTER);
+                    imagen.setVerticalTextPosition(JLabel.BOTTOM);
                     Panel.add(imagen);
                     label.add(imagen.getText());
-                    System.out.println("Se agrego nueva imagen que no estaba incluida =" + imagen.getText());
-                } else
-                {
-                    System.out.println("Imagen ya incluida");
                 }
-
             }
         }
         Panel.updateUI();
@@ -321,11 +315,11 @@ public class ServicioAgregar extends javax.swing.JFrame
         Panel.updateUI();
     }
 
-    public boolean IsIncluido(JLabel Label)
+    public boolean IsIncluido(String Label)
     {
         if (!label.isEmpty())
         {
-            if (label.contains(Label.getText()))
+            if (label.contains(Label))
             {
                 return true;
             }

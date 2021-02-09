@@ -208,7 +208,7 @@ public class Principal extends javax.swing.JFrame
         RenombrarImagenes(gif);
         RenombrarImagenes(mp4webm);
         RenombrarImagenes(webp);
-
+        Actualizar2();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + lista.length);
@@ -368,25 +368,21 @@ public class Principal extends javax.swing.JFrame
             {
                 if (!lista[i].isDirectory())
                 {
-                    ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
-                    JLabel imagen = new JLabel();
-                    imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                    imagen.setText(lista[i].getName());
-                    imagen.setHorizontalTextPosition(JLabel.CENTER);
-                    imagen.setVerticalTextPosition(JLabel.BOTTOM);
 
-                    if (!IsIncluido(imagen))
+                    if (!IsIncluido(lista[i].getName()))
                     {
+                        ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
+                        JLabel imagen = new JLabel();
+                        imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+                        imagen.setText(lista[i].getName());
+                        imagen.setHorizontalTextPosition(JLabel.CENTER);
+                        imagen.setVerticalTextPosition(JLabel.BOTTOM);
                         Panel.add(imagen);
                         label.add(imagen.getText());
-                        System.out.println("Se agrego nueva imagen que no estaba incluida =" + imagen.getText());
-                    } else
-                    {
-                        System.out.println("Imagen ya incluida");
                     }
-                    Panel.updateUI();
                 }
             }
+            Panel.updateUI();
         }
     }
 
@@ -410,11 +406,11 @@ public class Principal extends javax.swing.JFrame
         Panel.updateUI();
     }
 
-    public boolean IsIncluido(JLabel Label)
+    public boolean IsIncluido(String Label)
     {
         if (!label.isEmpty())
         {
-            if (label.contains(Label.getText()))
+            if (label.contains(Label))
             {
                 return true;
             }
