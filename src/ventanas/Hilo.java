@@ -2,6 +2,8 @@ package ventanas;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,6 +23,19 @@ public class Hilo extends Thread
         this.nombrar = nombrar;
         this.carpetaGeneral = carpetaGeneral;
         this.vtn = vtn;
+    }
+    
+    public void pausar()
+    {
+        
+        try
+        {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex)
+        {
+            Logger.getLogger(Hilo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 
     public void run()

@@ -275,6 +275,7 @@ public class ServicioAgregar extends javax.swing.JFrame
 
     public void Actualizar()
     {
+        nuevo.pausar();
         if (!nombrar.isEmpty())
         {
             for (int i = 0; i < nombrar.size(); i++)

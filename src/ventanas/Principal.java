@@ -59,6 +59,7 @@ public class Principal extends javax.swing.JFrame
         Panel = new javax.swing.JPanel();
         btnMostrar = new javax.swing.JButton();
         btnCrear = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -120,6 +121,15 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnSalirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -137,10 +147,12 @@ public class Principal extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnMostrar))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(btnRenombrar))
-                        .addGap(0, 350, Short.MAX_VALUE)))
+                        .addComponent(jLabel2)
+                        .addGap(0, 350, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnRenombrar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSalir)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -159,7 +171,9 @@ public class Principal extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnRenombrar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnRenombrar)
+                    .addComponent(btnSalir))
                 .addGap(62, 62, 62))
         );
 
@@ -238,6 +252,12 @@ public class Principal extends javax.swing.JFrame
             carpetaGeneral = directorio;
         }
     }//GEN-LAST:event_btnCrearActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalirActionPerformed
+    {//GEN-HEADEREND:event_btnSalirActionPerformed
+        new Menu().setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnSalirActionPerformed
 
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
@@ -492,6 +512,7 @@ public class Principal extends javax.swing.JFrame
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnRenombrar;
+    private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
