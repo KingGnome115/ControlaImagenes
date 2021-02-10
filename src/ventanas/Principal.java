@@ -414,13 +414,16 @@ public class Principal extends javax.swing.JFrame
         {
             for (int i = 0; i < lista.length; i++)
             {
-                ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
-                JLabel imagen = new JLabel();
-                imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                imagen.setText(lista[i].getName());
-                imagen.setHorizontalTextPosition(JLabel.CENTER);
-                imagen.setVerticalTextPosition(JLabel.BOTTOM);
-                Panel.add(imagen);
+                if (!lista[i].isDirectory())
+                {
+                    ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
+                    JLabel imagen = new JLabel();
+                    imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
+                    imagen.setText(lista[i].getName());
+                    imagen.setHorizontalTextPosition(JLabel.CENTER);
+                    imagen.setVerticalTextPosition(JLabel.BOTTOM);
+                    Panel.add(imagen);
+                }
             }
         }
         Panel.updateUI();
