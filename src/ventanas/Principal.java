@@ -31,6 +31,9 @@ public class Principal extends javax.swing.JFrame
     protected ArrayList<String> label = new ArrayList<>();
     protected Hilo nuevo;
 
+    private int indexInicio = 0;
+    private int idexFinal = 6;
+
     /**
      * Creates new form Principal
      */
@@ -259,6 +262,22 @@ public class Principal extends javax.swing.JFrame
         this.setVisible(false);
     }//GEN-LAST:event_btnSalirActionPerformed
 
+    private String RecortarNombre(String nombre)
+    {
+        String s = "";
+
+        if (nombre.length() > 15)
+        {
+            int n = nombre.length() - FilenameUtils.getExtension(nombre).length() - 1;
+            s = nombre.substring(0, 4) + "..." + nombre.substring(n - 2, n) + "." + FilenameUtils.getExtension(nombre);
+        } else
+        {
+            s = nombre;
+        }
+
+        return s;
+    }
+
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
         String s = "";
@@ -388,17 +407,17 @@ public class Principal extends javax.swing.JFrame
             {
                 if (!lista[i].isDirectory())
                 {
-
-                    if (!IsIncluido(lista[i].getName()))
+                    String tex = RecortarNombre(lista[i].getName());
+                    if (!IsIncluido(tex))
                     {
                         ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
                         JLabel imagen = new JLabel();
                         imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                        imagen.setText(lista[i].getName());
+                        imagen.setText(tex);
                         imagen.setHorizontalTextPosition(JLabel.CENTER);
                         imagen.setVerticalTextPosition(JLabel.BOTTOM);
                         Panel.add(imagen);
-                        label.add(imagen.getText());
+                        label.add(tex);
                     }
                 }
             }

@@ -32,7 +32,7 @@ public class Elegir extends javax.swing.JFrame
     protected ArrayList<File> gif = new ArrayList<>();
     protected ArrayList<File> mp4webm = new ArrayList<>();
     protected ArrayList<String> bottons = new ArrayList<>();
-    protected ArrayList<File> nombrar=new ArrayList<>();
+    protected ArrayList<File> nombrar = new ArrayList<>();
     protected Hilo nuevo;
 
     /**
@@ -62,7 +62,6 @@ public class Elegir extends javax.swing.JFrame
         jScrollPane1 = new javax.swing.JScrollPane();
         Panel = new javax.swing.JPanel();
         btnMostrar = new javax.swing.JButton();
-        btnCrear = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
@@ -115,16 +114,6 @@ public class Elegir extends javax.swing.JFrame
             }
         });
 
-        btnCrear.setText("Crear carpeta");
-        btnCrear.setEnabled(false);
-        btnCrear.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                btnCrearActionPerformed(evt);
-            }
-        });
-
         btnSalir.setText("Salir");
         btnSalir.addActionListener(new java.awt.event.ActionListener()
         {
@@ -147,8 +136,7 @@ public class Elegir extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnElegir))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnCrear)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnMostrar))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -169,9 +157,7 @@ public class Elegir extends javax.swing.JFrame
                     .addComponent(btnElegir)
                     .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnMostrar)
-                    .addComponent(btnCrear))
+                .addComponent(btnMostrar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -204,7 +190,6 @@ public class Elegir extends javax.swing.JFrame
                 jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
                 btnMostrar.setEnabled(true);
                 btnRenombrar.setEnabled(true);
-                btnCrear.setEnabled(true);
             }
         }
 
@@ -217,14 +202,13 @@ public class Elegir extends javax.swing.JFrame
 
     private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRenombrarActionPerformed
     {//GEN-HEADEREND:event_btnRenombrarActionPerformed
-        
-        btnCrearActionPerformed(evt);
-        
+
+        crear(evt);
+
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
         RenombrarImagenes();
-        
-        
+
 //        Actualizar2();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
@@ -240,9 +224,30 @@ public class Elegir extends javax.swing.JFrame
         Notificaciones("Imagenes Visualizadas", "Se imprimieron un total de " + lista.length);
     }//GEN-LAST:event_btnMostrarActionPerformed
 
-    private void btnCrearActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCrearActionPerformed
-    {//GEN-HEADEREND:event_btnCrearActionPerformed
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalirActionPerformed
+    {//GEN-HEADEREND:event_btnSalirActionPerformed
+        new Menu().setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_btnSalirActionPerformed
 
+    private String RecortarNombre(String nombre)
+    {
+        String s = "";
+
+        if (nombre.length() > 15)
+        {
+            int n = nombre.length() - FilenameUtils.getExtension(nombre).length() - 1;
+            s = nombre.substring(0, 4) + "..." + nombre.substring(n - 2, n) + "." + FilenameUtils.getExtension(nombre);
+        } else
+        {
+            s = nombre;
+        }
+
+        return s;
+    }
+
+    protected void crear(java.awt.event.ActionEvent evt)
+    {
         if (carpetaGeneral == null)
         {
             btnElegirActionPerformed(evt);
@@ -254,13 +259,7 @@ public class Elegir extends javax.swing.JFrame
             directorio.mkdir();
             carpetaGeneral = directorio;
         }
-    }//GEN-LAST:event_btnCrearActionPerformed
-
-    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalirActionPerformed
-    {//GEN-HEADEREND:event_btnSalirActionPerformed
-        new Menu().setVisible(true);
-        this.setVisible(false);
-    }//GEN-LAST:event_btnSalirActionPerformed
+    }
 
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
@@ -391,13 +390,13 @@ public class Elegir extends javax.swing.JFrame
             {
                 if (!lista[i].isDirectory())
                 {
-
-                    if (!IsIncluido(lista[i].getName()))
+                    String tex = RecortarNombre(lista[i].getName());
+                    if (!IsIncluido(tex))
                     {
                         ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
                         JButton imagen = new JButton();
                         imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                        imagen.setText(lista[i].getName());
+                        imagen.setText(tex);
                         imagen.setHorizontalTextPosition(JLabel.CENTER);
                         imagen.setVerticalTextPosition(JLabel.BOTTOM);
                         Panel.add(imagen);
@@ -531,7 +530,6 @@ public class Elegir extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
-    private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnRenombrar;

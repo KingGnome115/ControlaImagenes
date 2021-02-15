@@ -246,6 +246,22 @@ public class ServicioAgregar extends javax.swing.JFrame
         this.setVisible(false);
     }//GEN-LAST:event_btnSalirActionPerformed
 
+    private String RecortarNombre(String nombre)
+    {
+        String s = "";
+
+        if (nombre.length() > 15)
+        {
+            int n = nombre.length() - FilenameUtils.getExtension(nombre).length() - 1;
+            s = nombre.substring(0, 4) + "..." + nombre.substring(n - 2, n) + "." + FilenameUtils.getExtension(nombre);
+        } else
+        {
+            s = nombre;
+        }
+
+        return s;
+    }
+    
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
         String s = "";
@@ -280,16 +296,17 @@ public class ServicioAgregar extends javax.swing.JFrame
         {
             for (int i = 0; i < nombrar.size(); i++)
             {
-                if (!IsIncluido(nombrar.get(i).getName()))
+                String tex = RecortarNombre(nombrar.get(i).getName());
+                if (!IsIncluido(tex))
                 {
                     ImageIcon icono = new ImageIcon(nombrar.get(i).getAbsolutePath());
                     JLabel imagen = new JLabel();
                     imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                    imagen.setText(nombrar.get(i).getName());
+                    imagen.setText(tex);
                     imagen.setHorizontalTextPosition(JLabel.CENTER);
                     imagen.setVerticalTextPosition(JLabel.BOTTOM);
                     Panel.add(imagen);
-                    label.add(imagen.getText());
+                    label.add(tex);
                 }
             }
         }
