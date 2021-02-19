@@ -32,7 +32,7 @@ public class Principal extends javax.swing.JFrame
     protected Hilo nuevo;
 
     private int indexInicio = 0;
-    private int idexFinal = 6;
+    private int indexFinal=21;
 
     /**
      * Creates new form Principal
@@ -63,6 +63,8 @@ public class Principal extends javax.swing.JFrame
         btnMostrar = new javax.swing.JButton();
         btnCrear = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
+        btnSiguiente = new javax.swing.JButton();
+        Atras = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
@@ -133,6 +135,25 @@ public class Principal extends javax.swing.JFrame
             }
         });
 
+        btnSiguiente.setText("Siguiente");
+        btnSiguiente.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnSiguienteActionPerformed(evt);
+            }
+        });
+
+        Atras.setText("Atras");
+        Atras.setEnabled(false);
+        Atras.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                AtrasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -151,11 +172,15 @@ public class Principal extends javax.swing.JFrame
                         .addComponent(btnMostrar))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addGap(0, 350, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnRenombrar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSalir)))
+                        .addComponent(btnSalir))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(Atras)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSiguiente)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -173,11 +198,15 @@ public class Principal extends javax.swing.JFrame
                     .addComponent(btnCrear))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSiguiente)
+                    .addComponent(Atras))
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRenombrar)
                     .addComponent(btnSalir))
-                .addGap(62, 62, 62))
+                .addContainerGap())
         );
 
         pack();
@@ -204,6 +233,15 @@ public class Principal extends javax.swing.JFrame
                 btnMostrar.setEnabled(true);
                 btnRenombrar.setEnabled(true);
                 btnCrear.setEnabled(true);
+                int can = lista.length;
+                if (can > 21)
+                {
+                    indexFinal = 21;
+                } else
+                {
+                    indexFinal = can;
+                }
+                Actualizar();
             }
         }
 
@@ -225,7 +263,7 @@ public class Principal extends javax.swing.JFrame
         RenombrarImagenes(gif);
         RenombrarImagenes(mp4webm);
         RenombrarImagenes(webp);
-        Actualizar2();
+        Actualizar();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + lista.length);
@@ -261,6 +299,42 @@ public class Principal extends javax.swing.JFrame
         new Menu().setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSiguienteActionPerformed
+    {//GEN-HEADEREND:event_btnSiguienteActionPerformed
+        Atras.setEnabled(true);
+        indexInicio += 21;
+        indexFinal += 21;
+        if (indexFinal > lista.length)
+        {
+            indexFinal = lista.length;
+            indexInicio = indexFinal - 21;
+            btnSiguiente.setEnabled(false);
+        }
+        long inicio = System.currentTimeMillis();
+        Actualizar();
+        long fin = System.currentTimeMillis();
+        double tiempo = (double) ((fin - inicio) / 1000);
+        System.out.println(tiempo + " segundos");
+    }//GEN-LAST:event_btnSiguienteActionPerformed
+
+    private void AtrasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_AtrasActionPerformed
+    {//GEN-HEADEREND:event_AtrasActionPerformed
+        btnSiguiente.setEnabled(true);
+        indexInicio -= 21;
+        indexFinal -= 21;
+        if (indexInicio < 0)
+        {
+            indexInicio = 0;
+            indexFinal = 21;
+            Atras.setVisible(false);
+        }
+        long inicio = System.currentTimeMillis();
+        Actualizar();
+        long fin = System.currentTimeMillis();
+        double tiempo = (double) ((fin - inicio) / 1000);
+        System.out.println(tiempo + " segundos");
+    }//GEN-LAST:event_AtrasActionPerformed
 
     private String RecortarNombre(String nombre)
     {
@@ -401,51 +475,28 @@ public class Principal extends javax.swing.JFrame
 
     public void Actualizar()
     {
+        Panel.removeAll();
+        label.clear();
         if (lista != null)
         {
-            for (int i = 0; i < lista.length; i++)
+            System.out.println("index Inicio: " + indexInicio);
+            System.out.println("indez Final: " + indexFinal);
+            for (int i = indexInicio; i < indexFinal; i++)
             {
                 if (!lista[i].isDirectory())
                 {
                     String tex = RecortarNombre(lista[i].getName());
-                    if (!IsIncluido(tex))
-                    {
-                        ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
-                        JLabel imagen = new JLabel();
-                        imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                        imagen.setText(tex);
-                        imagen.setHorizontalTextPosition(JLabel.CENTER);
-                        imagen.setVerticalTextPosition(JLabel.BOTTOM);
-                        Panel.add(imagen);
-                        label.add(tex);
-                    }
-                }
-            }
-            Panel.updateUI();
-        }
-    }
-
-    public void Actualizar2()
-    {
-        Panel.removeAll();
-        lista = carpetaGeneral.listFiles();
-        if (lista != null)
-        {
-            for (int i = 0; i < lista.length; i++)
-            {
-                if (!lista[i].isDirectory())
-                {
                     ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
                     JLabel imagen = new JLabel();
                     imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                    imagen.setText(lista[i].getName());
+                    imagen.setText(tex);
                     imagen.setHorizontalTextPosition(JLabel.CENTER);
                     imagen.setVerticalTextPosition(JLabel.BOTTOM);
                     Panel.add(imagen);
                 }
             }
+            Panel.updateUI();
         }
-        Panel.updateUI();
     }
 
     public boolean IsIncluido(String Label)
@@ -529,12 +580,14 @@ public class Principal extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Atras;
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnRenombrar;
     private javax.swing.JButton btnSalir;
+    private javax.swing.JButton btnSiguiente;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
