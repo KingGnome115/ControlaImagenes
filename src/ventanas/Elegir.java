@@ -10,6 +10,10 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +21,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.apache.commons.io.FilenameUtils;
 
@@ -24,17 +29,15 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Kevin
  */
-public class Elegir extends javax.swing.JFrame
+public class Elegir extends javax.swing.JFrame implements ActionListener
 {
 
     protected File carpetaGeneral = null;
     protected File[] lista = null;
-    protected ArrayList<File> webp = new ArrayList<>();
-    protected ArrayList<File> gif = new ArrayList<>();
-    protected ArrayList<File> mp4webm = new ArrayList<>();
     protected ArrayList<String> bottons = new ArrayList<>();
     protected ArrayList<File> nombrar = new ArrayList<>();
-    protected Hilo nuevo;
+    protected ArrayList<String> directoriosFavoritos = new ArrayList<>();
+    private ArrayList<JMenuItem> submenus = new ArrayList<>();
 
     private int indexInicio = 0;
     private int indexFinal;
@@ -45,6 +48,59 @@ public class Elegir extends javax.swing.JFrame
     public Elegir()
     {
         initComponents();
+
+        try
+        {
+            ObjectInputStream directorios = new ObjectInputStream(new FileInputStream("dirFav.dat"));
+            directoriosFavoritos = (ArrayList<String>) directorios.readObject();
+            if (directoriosFavoritos == null)
+            {
+                directoriosFavoritos = new ArrayList<>();
+            } else
+            {
+                for (int i = 0; i < directoriosFavoritos.size(); i++)
+                {
+                    JMenuItem menuItem = new JMenuItem(directoriosFavoritos.get(i));
+                    menuItem.addActionListener(this);
+                    jMenuFavoritos.add(menuItem);
+                    submenus.add(menuItem);
+                }
+            }
+            directorios.close();
+        } catch (Exception e)
+        {
+        }
+    }
+
+    public void actionPerformed(ActionEvent e)
+    {
+        for (int i = 0; i < submenus.size(); i++)
+        {
+            if (e.getSource() == submenus.get(i))
+            {
+                carpetaGeneral = new File(directoriosFavoritos.get(i));
+                jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+                lista = carpetaGeneral.listFiles();
+                if (lista != null)
+                {
+                    SepararFormatos();
+                    jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+                    btnMostrar.setEnabled(true);
+                    btnRenombrar.setEnabled(true);
+                    btnAgregar.setEnabled(true);
+                    int can = lista.length;
+                    if (can > 21)
+                    {
+                        indexFinal = 21;
+                    } else
+                    {
+                        indexFinal = can;
+                    }
+                }
+                Actualizar();
+                break;
+            }
+        }
     }
 
     /**
@@ -58,7 +114,6 @@ public class Elegir extends javax.swing.JFrame
     {
 
         jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTCarpeta = new javax.swing.JLabel();
         btnElegir = new javax.swing.JButton();
@@ -69,21 +124,14 @@ public class Elegir extends javax.swing.JFrame
         btnSalir = new javax.swing.JButton();
         btnSiguiente = new javax.swing.JButton();
         Atras = new javax.swing.JButton();
+        btnAgregar = new javax.swing.JButton();
+        ChecarOpcion = new javax.swing.JCheckBox();
+        JMenu = new javax.swing.JMenuBar();
+        jMenuFavoritos = new javax.swing.JMenu();
 
         jLabel1.setText("jLabel1");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jLabel2.setText("Carpeta Actual.- ");
 
@@ -148,6 +196,31 @@ public class Elegir extends javax.swing.JFrame
             }
         });
 
+        btnAgregar.setText("Agregar a favoritos");
+        btnAgregar.setEnabled(false);
+        btnAgregar.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnAgregarActionPerformed(evt);
+            }
+        });
+
+        ChecarOpcion.setText("Todas las imagenes");
+        ChecarOpcion.setToolTipText("Seleccione para nombrar todas las imagenes de la carpeta");
+
+        jMenuFavoritos.setText("Carpetas Favoritas");
+        jMenuFavoritos.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuFavoritosActionPerformed(evt);
+            }
+        });
+        JMenu.add(jMenuFavoritos);
+
+        setJMenuBar(JMenu);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -161,11 +234,9 @@ public class Elegir extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnElegir))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnAgregar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnMostrar))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnRenombrar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -173,27 +244,36 @@ public class Elegir extends javax.swing.JFrame
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(Atras)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSiguiente)))
+                        .addComponent(btnSiguiente))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(ChecarOpcion))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(20, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnElegir)
                     .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnMostrar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnMostrar)
+                    .addComponent(btnAgregar))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSiguiente)
                     .addComponent(Atras))
-                .addGap(30, 30, 30)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ChecarOpcion)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnRenombrar)
                     .addComponent(btnSalir))
@@ -223,6 +303,7 @@ public class Elegir extends javax.swing.JFrame
                 jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
                 btnMostrar.setEnabled(true);
                 btnRenombrar.setEnabled(true);
+                btnAgregar.setEnabled(true);
                 int can = lista.length;
                 if (can > 21)
                 {
@@ -245,17 +326,21 @@ public class Elegir extends javax.swing.JFrame
     private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnRenombrarActionPerformed
     {//GEN-HEADEREND:event_btnRenombrarActionPerformed
 
-        crear(evt);
-
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-        RenombrarImagenes();
         
-        
+        if (ChecarOpcion.isSelected())
+        {
+            RenombrarImagenes1();
+            Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + lista.length);
+        } else
+        {
+            crear(evt);
+            RenombrarImagenes();
+            Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + nombrar.size());
+        }
         
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-        Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + lista.length);
+        
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
     private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnMostrarActionPerformed
@@ -269,8 +354,19 @@ public class Elegir extends javax.swing.JFrame
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalirActionPerformed
     {//GEN-HEADEREND:event_btnSalirActionPerformed
-        new Menu().setVisible(true);
-        this.setVisible(false);
+
+        try
+        {
+            ObjectOutputStream directorios = new ObjectOutputStream(new FileOutputStream("dirFav.dat"));
+            directorios.writeObject(directoriosFavoritos);
+            directorios.close();
+        } catch (Exception e)
+        {
+        }
+
+        dispose();
+        System.exit(0);
+
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSiguienteActionPerformed
@@ -308,6 +404,22 @@ public class Elegir extends javax.swing.JFrame
         double tiempo = (double) ((fin - inicio) / 1000);
         System.out.println(tiempo + " segundos");
     }//GEN-LAST:event_AtrasActionPerformed
+
+    private void jMenuFavoritosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuFavoritosActionPerformed
+    {//GEN-HEADEREND:event_jMenuFavoritosActionPerformed
+
+
+    }//GEN-LAST:event_jMenuFavoritosActionPerformed
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAgregarActionPerformed
+    {//GEN-HEADEREND:event_btnAgregarActionPerformed
+
+        if (!directoriosFavoritos.contains(carpetaGeneral.getAbsolutePath()))
+        {
+            directoriosFavoritos.add(carpetaGeneral.getAbsolutePath());
+        }
+
+    }//GEN-LAST:event_btnAgregarActionPerformed
 
     private String RecortarNombre(String nombre)
     {
@@ -400,6 +512,39 @@ public class Elegir extends javax.swing.JFrame
 //        lista = carpetaGeneral.listFiles();
 //        SepararFormatos();
     }
+    
+    protected void RenombrarImagenes1()
+    {
+        String s = "";
+        for (int i = 0; i < lista.length; i++)
+        {
+
+            if (!lista[i].isDirectory())
+            {
+                File tmp;
+                s = carpetaGeneral.getAbsolutePath() + "\\";
+                String tam = String.valueOf(lista.length);
+                String ii = String.valueOf(i);
+                String ceros = "";
+                int t = tam.length() - ii.length();
+                if (t == 0 && ii.length() == 1)
+                {
+                    t = 1;
+                }
+                for (int j = 0; j < t; j++)
+                {
+                    ceros += "0";
+                }
+                s += ceros + i;
+                String extencion = FilenameUtils.getExtension(lista[i].getName());
+                s += "." + extencion;
+                tmp = new File(s);
+                lista[i].renameTo(tmp);
+            }
+        }
+        lista = carpetaGeneral.listFiles();
+        Actualizar();
+    }
 
     protected ArrayList CrearCarpetas(ArrayList<File> obj, String nombreCarpeta)
     {
@@ -432,24 +577,12 @@ public class Elegir extends javax.swing.JFrame
         for (int i = 0; i < lista.length; i++)
         {
             String extencion = FilenameUtils.getExtension(lista[i].getName());
-            if ((extencion.compareTo("webp") == 0))
+            if ((extencion.compareTo("webp") == 0) || (extencion.compareTo("mp4") == 0) || (extencion.compareTo("webm") == 0)
+                    || (extencion.compareTo("gif") == 0))
             {
-                webp.add(lista[i]);
             } else
             {
-                if ((extencion.compareTo("mp4") == 0) || (extencion.compareTo("webm") == 0))
-                {
-                    mp4webm.add(lista[i]);
-                } else
-                {
-                    if (extencion.compareTo("gif") == 0)
-                    {
-                        gif.add(lista[i]);
-                    } else
-                    {
-                        tmp.add(lista[i]);
-                    }
-                }
+                tmp.add(lista[i]);
             }
         }
 
@@ -602,6 +735,12 @@ public class Elegir extends javax.swing.JFrame
         }
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable()
@@ -615,7 +754,10 @@ public class Elegir extends javax.swing.JFrame
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Atras;
+    private javax.swing.JCheckBox ChecarOpcion;
+    private javax.swing.JMenuBar JMenu;
     private javax.swing.JPanel Panel;
+    private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnMostrar;
     private javax.swing.JButton btnRenombrar;
@@ -623,7 +765,7 @@ public class Elegir extends javax.swing.JFrame
     private javax.swing.JButton btnSiguiente;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JMenu jMenuFavoritos;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jTCarpeta;
     // End of variables declaration//GEN-END:variables
