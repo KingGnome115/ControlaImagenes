@@ -39,6 +39,10 @@ public class Elegir extends javax.swing.JFrame implements ActionListener
     protected ArrayList<String> directoriosFavoritos = new ArrayList<>();
     private ArrayList<JMenuItem> submenus = new ArrayList<>();
 
+    protected ArrayList<File> webp = new ArrayList<>();
+    protected ArrayList<File> gif = new ArrayList<>();
+    protected ArrayList<File> mp4webm = new ArrayList<>();
+
     private int indexInicio = 0;
     private int indexFinal;
 
@@ -327,20 +331,31 @@ public class Elegir extends javax.swing.JFrame implements ActionListener
     {//GEN-HEADEREND:event_btnRenombrarActionPerformed
 
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        
+
         if (ChecarOpcion.isSelected())
         {
+            SepararFormatos();
             RenombrarImagenes1();
+            webp = CrearCarpetas(webp, "Webp");
+            gif = CrearCarpetas(gif, "Gif");
+            mp4webm = CrearCarpetas(mp4webm, "Videos");
+            RenombrarImagenes(gif);
+            RenombrarImagenes(mp4webm);
+            RenombrarImagenes(webp);
             Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + lista.length);
         } else
         {
             crear(evt);
             RenombrarImagenes();
+            lista = carpetaGeneral.getParentFile().listFiles();
+            carpetaGeneral = carpetaGeneral.getParentFile();
+            RenombrarImagenes1();
             Notificaciones("Renombre de imagenes en " + carpetaGeneral.getName(), "Se renombraron un total de " + nombrar.size());
         }
-        
+        bottons.clear();
+        Actualizar();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-        
+
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
     private void btnMostrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnMostrarActionPerformed
@@ -420,6 +435,41 @@ public class Elegir extends javax.swing.JFrame implements ActionListener
         }
 
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void SepararFormatos()
+    {
+        ArrayList<File> tmp = new ArrayList<>();
+        for (int i = 0; i < lista.length; i++)
+        {
+            String extencion = FilenameUtils.getExtension(lista[i].getName());
+            if ((extencion.compareTo("webp") == 0))
+            {
+                webp.add(lista[i]);
+            } else
+            {
+                if ((extencion.compareTo("mp4") == 0) || (extencion.compareTo("webm") == 0))
+                {
+                    mp4webm.add(lista[i]);
+                } else
+                {
+                    if (extencion.compareTo("gif") == 0)
+                    {
+                        gif.add(lista[i]);
+                    } else
+                    {
+                        tmp.add(lista[i]);
+                    }
+                }
+            }
+        }
+
+        lista = new File[tmp.size()];
+        for (int i = 0; i < tmp.size(); i++)
+        {
+            lista[i] = tmp.get(i);
+        }
+
+    }
 
     private String RecortarNombre(String nombre)
     {
@@ -509,10 +559,8 @@ public class Elegir extends javax.swing.JFrame implements ActionListener
             }
 
         }
-//        lista = carpetaGeneral.listFiles();
-//        SepararFormatos();
     }
-    
+
     protected void RenombrarImagenes1()
     {
         String s = "";
@@ -569,29 +617,6 @@ public class Elegir extends javax.swing.JFrame implements ActionListener
             }
         }
         return tm;
-    }
-
-    private void SepararFormatos()
-    {
-        ArrayList<File> tmp = new ArrayList<>();
-        for (int i = 0; i < lista.length; i++)
-        {
-            String extencion = FilenameUtils.getExtension(lista[i].getName());
-            if ((extencion.compareTo("webp") == 0) || (extencion.compareTo("mp4") == 0) || (extencion.compareTo("webm") == 0)
-                    || (extencion.compareTo("gif") == 0))
-            {
-            } else
-            {
-                tmp.add(lista[i]);
-            }
-        }
-
-        lista = new File[tmp.size()];
-        for (int i = 0; i < tmp.size(); i++)
-        {
-            lista[i] = tmp.get(i);
-        }
-
     }
 
     public void Actualizar()
