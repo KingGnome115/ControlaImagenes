@@ -379,8 +379,8 @@ public class Elegir extends javax.swing.JFrame implements ActionListener
         {
         }
 
-        dispose();
-        System.exit(0);
+        new Menu().setVisible(true);
+        this.setVisible(false);
 
     }//GEN-LAST:event_btnSalirActionPerformed
 

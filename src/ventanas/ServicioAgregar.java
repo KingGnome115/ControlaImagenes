@@ -6,13 +6,20 @@ import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.apache.commons.io.FilenameUtils;
 
@@ -20,14 +27,16 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Kevin
  */
-public class ServicioAgregar extends javax.swing.JFrame
+public class ServicioAgregar extends javax.swing.JFrame implements ActionListener
 {
 
     protected File carpetaGeneral = null;
-    protected File[] Lista = null;
+    protected File[] lista = null;
     protected ArrayList<File> nombrar = new ArrayList<>();
     protected ArrayList<String> label = new ArrayList<>();
     protected Hilo nuevo;
+    protected ArrayList<String> directoriosFavoritos = new ArrayList<>();
+    private ArrayList<JMenuItem> submenus = new ArrayList<>();
 
     /**
      * Creates new form Principal
@@ -36,6 +45,48 @@ public class ServicioAgregar extends javax.swing.JFrame
     {
         initComponents();
         nuevo = new Hilo();
+        
+        try
+        {
+            ObjectInputStream directorios = new ObjectInputStream(new FileInputStream("dirFav.dat"));
+            directoriosFavoritos = (ArrayList<String>) directorios.readObject();
+            if (directoriosFavoritos == null)
+            {
+                directoriosFavoritos = new ArrayList<>();
+            } else
+            {
+                for (int i = 0; i < directoriosFavoritos.size(); i++)
+                {
+                    JMenuItem menuItem = new JMenuItem(directoriosFavoritos.get(i));
+                    menuItem.addActionListener(this);
+                    jMenuFavoritos.add(menuItem);
+                    submenus.add(menuItem);
+                }
+            }
+            directorios.close();
+        } catch (Exception e)
+        {
+        }
+    }
+    
+    public void actionPerformed(ActionEvent e)
+    {
+        for (int i = 0; i < submenus.size(); i++)
+        {
+            if (e.getSource() == submenus.get(i))
+            {
+                carpetaGeneral = new File(directoriosFavoritos.get(i));
+                jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+                lista = carpetaGeneral.listFiles();
+                if (lista != null)
+                {
+                    jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
+                    btnAgregar.setEnabled(true);
+                }
+                Actualizar();
+                break;
+            }
+        }
     }
 
     /**
@@ -59,6 +110,9 @@ public class ServicioAgregar extends javax.swing.JFrame
         btnFinalizar = new javax.swing.JButton();
         btnCrear = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
+        btnAgregar1 = new javax.swing.JButton();
+        JMenu = new javax.swing.JMenuBar();
+        jMenuFavoritos = new javax.swing.JMenu();
 
         jLabel1.setText("jLabel1");
 
@@ -129,6 +183,28 @@ public class ServicioAgregar extends javax.swing.JFrame
             }
         });
 
+        btnAgregar1.setText("Agregar a favoritos");
+        btnAgregar1.setEnabled(false);
+        btnAgregar1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                btnAgregar1ActionPerformed(evt);
+            }
+        });
+
+        jMenuFavoritos.setText("Carpetas Favoritas");
+        jMenuFavoritos.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jMenuFavoritosActionPerformed(evt);
+            }
+        });
+        JMenu.add(jMenuFavoritos);
+
+        setJMenuBar(JMenu);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -149,7 +225,8 @@ public class ServicioAgregar extends javax.swing.JFrame
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnAgregar1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCrear)))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -160,15 +237,17 @@ public class ServicioAgregar extends javax.swing.JFrame
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(9, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnElegir)
                     .addComponent(jTCarpeta, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnCrear)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCrear)
+                    .addComponent(btnAgregar1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -204,7 +283,7 @@ public class ServicioAgregar extends javax.swing.JFrame
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAgregarActionPerformed
     {//GEN-HEADEREND:event_btnAgregarActionPerformed
-        nuevo.valores(Lista, nombrar, carpetaGeneral, this);
+        nuevo.valores(lista, nombrar, carpetaGeneral, this);
         nuevo.start();
     }//GEN-LAST:event_btnAgregarActionPerformed
 
@@ -242,9 +321,32 @@ public class ServicioAgregar extends javax.swing.JFrame
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalirActionPerformed
     {//GEN-HEADEREND:event_btnSalirActionPerformed
+        
+         try
+        {
+            ObjectOutputStream directorios = new ObjectOutputStream(new FileOutputStream("dirFav.dat"));
+            directorios.writeObject(directoriosFavoritos);
+            directorios.close();
+        } catch (Exception e)
+        {
+        }
         new Menu().setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void jMenuFavoritosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuFavoritosActionPerformed
+    {//GEN-HEADEREND:event_jMenuFavoritosActionPerformed
+
+    }//GEN-LAST:event_jMenuFavoritosActionPerformed
+
+    private void btnAgregar1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAgregar1ActionPerformed
+    {//GEN-HEADEREND:event_btnAgregar1ActionPerformed
+
+        if (!directoriosFavoritos.contains(carpetaGeneral.getAbsolutePath()))
+        {
+            directoriosFavoritos.add(carpetaGeneral.getAbsolutePath());
+        }
+    }//GEN-LAST:event_btnAgregar1ActionPerformed
 
     private String RecortarNombre(String nombre)
     {
@@ -316,15 +418,15 @@ public class ServicioAgregar extends javax.swing.JFrame
     public void Actualizar2()
     {
         Panel.removeAll();
-        Lista = carpetaGeneral.listFiles();
-        if (Lista != null)
+        lista = carpetaGeneral.listFiles();
+        if (lista != null)
         {
-            for (int i = 0; i < Lista.length; i++)
+            for (int i = 0; i < lista.length; i++)
             {
-                ImageIcon icono = new ImageIcon(Lista[i].getAbsolutePath());
+                ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
                 JLabel imagen = new JLabel();
                 imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
-                imagen.setText(Lista[i].getName());
+                imagen.setText(lista[i].getName());
                 imagen.setHorizontalTextPosition(JLabel.CENTER);
                 imagen.setVerticalTextPosition(JLabel.BOTTOM);
                 Panel.add(imagen);
@@ -415,14 +517,17 @@ public class ServicioAgregar extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuBar JMenu;
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnAgregar1;
     private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnFinalizar;
     private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JMenu jMenuFavoritos;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jTCarpeta;
