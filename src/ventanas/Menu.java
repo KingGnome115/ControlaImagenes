@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ventanas;
 
 /**
@@ -12,12 +7,17 @@ package ventanas;
 public class Menu extends javax.swing.JFrame
 {
 
+    private final String user = System.getProperty("user.name");
+    private String dir = "C:\\Users\\" + user + "\\Pictures";
+    public static String direc;
+    
     /**
      * Creates new form Menu
      */
     public Menu()
     {
         initComponents();
+        direc = dir;
     }
 
     /**

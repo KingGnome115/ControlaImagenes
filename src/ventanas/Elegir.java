@@ -291,8 +291,7 @@ public class Elegir extends javax.swing.JFrame implements ActionListener
     private void btnElegirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnElegirActionPerformed
     {//GEN-HEADEREND:event_btnElegirActionPerformed
 
-        JFileChooser carpeta = new JFileChooser();
-        carpeta.setCurrentDirectory(new File("."));
+        JFileChooser carpeta = new JFileChooser(Menu.direc);
         carpeta.setDialogTitle("Seleccione la carpeta para trabajar");
         carpeta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         carpeta.setAcceptAllFileFilterUsed(false);
