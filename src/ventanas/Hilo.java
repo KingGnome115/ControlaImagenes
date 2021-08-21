@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  *
@@ -24,10 +25,10 @@ public class Hilo extends Thread
         this.carpetaGeneral = carpetaGeneral;
         this.vtn = vtn;
     }
-    
+
     public void pausar()
     {
-        
+
         try
         {
             Thread.sleep(1000);
@@ -35,12 +36,11 @@ public class Hilo extends Thread
         {
             Logger.getLogger(Hilo.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     public void run()
     {
-        System.out.println("Empece hilo");
         while (!isInterrupted())
         {
             Lista = carpetaGeneral.listFiles();
@@ -51,13 +51,20 @@ public class Hilo extends Thread
                 {
                     if (!nombrar.contains(Lista[i]))
                     {
-                        nombrar.add(Lista[i]);
-                        vtn.Actualizar();
+                        String extension = FilenameUtils.getExtension(Lista[i].getName());
+                        if (!Lista[i].isDirectory() 
+                                && extension.compareTo("jpg")==0
+                                && extension.compareTo("gif")==0
+                                && extension.compareTo("png")==0
+                                && extension.compareTo("jpeg")==0)
+                        {
+                            nombrar.add(Lista[i]);
+                            vtn.Actualizar();
+                        }
                     }
                 }
             }
         }
-        System.out.println("Hilo muerto");
     }
 
 }

@@ -31,7 +31,7 @@ import org.apache.commons.io.FilenameUtils;
  *
  * @author Kevin
  */
-public class ServicioAgregar extends javax.swing.JFrame implements ActionListener
+public class ServicioAgregar extends javax.swing.JFrame
 {
 
     protected File carpetaGeneral = null;
@@ -42,9 +42,6 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
 
     private MiniVentana ven;
 
-    protected ArrayList<String> directoriosFavoritos = new ArrayList<>();
-    private ArrayList<JMenuItem> submenus = new ArrayList<>();
-
     /**
      * Creates new form Principal
      */
@@ -53,47 +50,6 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
         initComponents();
         nuevo = new Hilo();
 
-        try
-        {
-            ObjectInputStream directorios = new ObjectInputStream(new FileInputStream("dirFav.dat"));
-            directoriosFavoritos = (ArrayList<String>) directorios.readObject();
-            if (directoriosFavoritos == null)
-            {
-                directoriosFavoritos = new ArrayList<>();
-            } else
-            {
-                for (int i = 0; i < directoriosFavoritos.size(); i++)
-                {
-                    JMenuItem menuItem = new JMenuItem(directoriosFavoritos.get(i));
-                    menuItem.addActionListener(this);
-                    jMenuFavoritos.add(menuItem);
-                    submenus.add(menuItem);
-                }
-            }
-            directorios.close();
-        } catch (Exception e)
-        {
-        }
-    }
-
-    public void actionPerformed(ActionEvent e)
-    {
-        for (int i = 0; i < submenus.size(); i++)
-        {
-            if (e.getSource() == submenus.get(i))
-            {
-                carpetaGeneral = new File(directoriosFavoritos.get(i));
-                jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
-                lista = carpetaGeneral.listFiles();
-                if (lista != null)
-                {
-                    jTCarpeta.setText(carpetaGeneral.getAbsolutePath());
-                    btnAgregar.setEnabled(true);
-                }
-                Actualizar();
-                break;
-            }
-        }
     }
 
     /**
@@ -106,8 +62,6 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
     private void initComponents()
     {
 
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTCarpeta = new javax.swing.JLabel();
         btnElegir = new javax.swing.JButton();
@@ -117,24 +71,13 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
         btnFinalizar = new javax.swing.JButton();
         btnCrear = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
-        btnAgregar1 = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        jLabelEncontrados = new javax.swing.JLabel();
         JMenu = new javax.swing.JMenuBar();
         jMenuFavoritos = new javax.swing.JMenu();
 
-        jLabel1.setText("jLabel1");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jLabel2.setText("Carpeta Actual.- ");
 
@@ -190,15 +133,13 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
             }
         });
 
-        btnAgregar1.setText("Agregar a favoritos");
-        btnAgregar1.setEnabled(false);
-        btnAgregar1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                btnAgregar1ActionPerformed(evt);
-            }
-        });
+        btnActualizar.setText("Actualizar");
+        btnActualizar.setEnabled(false);
+
+        jLabel3.setText("Detectados: ");
+        jLabel3.setToolTipText("");
+
+        jLabelEncontrados.setText("0");
 
         jMenuFavoritos.setText("Carpetas Favoritas");
         jMenuFavoritos.addActionListener(new java.awt.event.ActionListener()
@@ -232,8 +173,12 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnAgregar1)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabelEncontrados, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnActualizar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCrear)))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -244,7 +189,7 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(9, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -253,7 +198,9 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCrear)
-                    .addComponent(btnAgregar1))
+                    .addComponent(btnActualizar)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabelEncontrados))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -329,14 +276,6 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalirActionPerformed
     {//GEN-HEADEREND:event_btnSalirActionPerformed
 
-        try
-        {
-            ObjectOutputStream directorios = new ObjectOutputStream(new FileOutputStream("dirFav.dat"));
-            directorios.writeObject(directoriosFavoritos);
-            directorios.close();
-        } catch (Exception e)
-        {
-        }
         new Menu().setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnSalirActionPerformed
@@ -345,15 +284,6 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
     {//GEN-HEADEREND:event_jMenuFavoritosActionPerformed
 
     }//GEN-LAST:event_jMenuFavoritosActionPerformed
-
-    private void btnAgregar1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAgregar1ActionPerformed
-    {//GEN-HEADEREND:event_btnAgregar1ActionPerformed
-
-        if (!directoriosFavoritos.contains(carpetaGeneral.getAbsolutePath()))
-        {
-            directoriosFavoritos.add(carpetaGeneral.getAbsolutePath());
-        }
-    }//GEN-LAST:event_btnAgregar1ActionPerformed
 
     private String RecortarNombre(String nombre)
     {
@@ -444,18 +374,36 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
     public void Actualizar2()
     {
         Panel.removeAll();
+        final ServicioAgregar actual = this;
         lista = carpetaGeneral.listFiles();
         if (lista != null)
         {
             for (int i = 0; i < lista.length; i++)
             {
-                ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
-                JLabel imagen = new JLabel();
+                final ImageIcon icono = new ImageIcon(lista[i].getAbsolutePath());
+                final JLabel imagen = new JLabel();
                 imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
                 imagen.setText(lista[i].getName());
                 imagen.setHorizontalTextPosition(JLabel.CENTER);
                 imagen.setVerticalTextPosition(JLabel.BOTTOM);
                 Panel.add(imagen);
+                
+                imagen.addMouseListener(new MouseAdapter()
+                    {
+                        public void mouseEntered(MouseEvent evt)
+                        {
+                            Point pt = new Point(14, 28);
+                            SwingUtilities.convertPointToScreen(pt, imagen);
+                            ServicioAgregar.this.ven = new MiniVentana(actual, true, icono, pt);
+                            ServicioAgregar.this.ven.setVisible(true);
+                        }
+
+                        public void mouseClicked(MouseEvent evt)
+                        {
+                            imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, 4)));
+                        }
+                    });
+                
             }
         }
         Panel.updateUI();
@@ -545,16 +493,16 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar JMenu;
     private javax.swing.JPanel Panel;
+    private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnAgregar;
-    private javax.swing.JButton btnAgregar1;
     private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnElegir;
     private javax.swing.JButton btnFinalizar;
     private javax.swing.JButton btnSalir;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabelEncontrados;
     private javax.swing.JMenu jMenuFavoritos;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel jTCarpeta;
     // End of variables declaration//GEN-END:variables

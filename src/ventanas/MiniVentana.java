@@ -35,7 +35,7 @@ public class MiniVentana extends javax.swing.JDialog
         initComponents();
         setLocation(pt);
         this.icono = icono;
-        this.imagenA.setIcon(new ImageIcon(icono.getImage().getScaledInstance(360, 300, 4)));
+        this.imagenA.setIcon(new ImageIcon(icono.getImage().getScaledInstance(360, 310, 4)));
     }
 
     /**
