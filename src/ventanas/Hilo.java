@@ -52,11 +52,11 @@ public class Hilo extends Thread
                     if (!nombrar.contains(Lista[i]))
                     {
                         String extension = FilenameUtils.getExtension(Lista[i].getName());
-                        if (!Lista[i].isDirectory() 
-                                && extension.compareTo("jpg")==0
-                                && extension.compareTo("gif")==0
-                                && extension.compareTo("png")==0
-                                && extension.compareTo("jpeg")==0)
+                        if (!Lista[i].isDirectory()
+                                && (extension.compareTo("jpg") == 0
+                                || extension.compareTo("gif") == 0
+                                || extension.compareTo("png") == 0
+                                || extension.compareTo("jpeg") == 0))
                         {
                             nombrar.add(Lista[i]);
                             vtn.Actualizar();
