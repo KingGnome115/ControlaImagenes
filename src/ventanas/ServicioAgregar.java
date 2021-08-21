@@ -3,11 +3,14 @@ package ventanas;
 import java.awt.AWTException;
 import java.awt.Cursor;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,6 +24,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import org.apache.commons.io.FilenameUtils;
 
 /**
@@ -35,6 +39,9 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
     protected ArrayList<File> nombrar = new ArrayList<>();
     protected ArrayList<String> label = new ArrayList<>();
     protected Hilo nuevo;
+
+    private MiniVentana ven;
+
     protected ArrayList<String> directoriosFavoritos = new ArrayList<>();
     private ArrayList<JMenuItem> submenus = new ArrayList<>();
 
@@ -45,7 +52,7 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
     {
         initComponents();
         nuevo = new Hilo();
-        
+
         try
         {
             ObjectInputStream directorios = new ObjectInputStream(new FileInputStream("dirFav.dat"));
@@ -68,7 +75,7 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
         {
         }
     }
-    
+
     public void actionPerformed(ActionEvent e)
     {
         for (int i = 0; i < submenus.size(); i++)
@@ -284,6 +291,7 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
     {//GEN-HEADEREND:event_btnAgregarActionPerformed
         nuevo.valores(lista, nombrar, carpetaGeneral, this);
         nuevo.start();
+        this.btnAgregar.setEnabled(false);
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFinalizarActionPerformed
@@ -320,8 +328,8 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalirActionPerformed
     {//GEN-HEADEREND:event_btnSalirActionPerformed
-        
-         try
+
+        try
         {
             ObjectOutputStream directorios = new ObjectOutputStream(new FileOutputStream("dirFav.dat"));
             directorios.writeObject(directoriosFavoritos);
@@ -362,7 +370,7 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
 
         return s;
     }
-    
+
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
         String s = "";
@@ -393,6 +401,7 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
     public void Actualizar()
     {
         nuevo.pausar();
+        final ServicioAgregar actual = this;
         if (!nombrar.isEmpty())
         {
             for (int i = 0; i < nombrar.size(); i++)
@@ -400,13 +409,31 @@ public class ServicioAgregar extends javax.swing.JFrame implements ActionListene
                 String tex = RecortarNombre(nombrar.get(i).getName());
                 if (!IsIncluido(tex))
                 {
-                    ImageIcon icono = new ImageIcon(nombrar.get(i).getAbsolutePath());
-                    JLabel imagen = new JLabel();
+                    final ImageIcon icono = new ImageIcon(nombrar.get(i).getAbsolutePath());
+                    final JLabel imagen = new JLabel();
                     imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
                     imagen.setText(tex);
                     imagen.setHorizontalTextPosition(JLabel.CENTER);
                     imagen.setVerticalTextPosition(JLabel.BOTTOM);
+
                     Panel.add(imagen);
+
+                    imagen.addMouseListener(new MouseAdapter()
+                    {
+                        public void mouseEntered(MouseEvent evt)
+                        {
+                            Point pt = new Point(14, 28);
+                            SwingUtilities.convertPointToScreen(pt, imagen);
+                            ServicioAgregar.this.ven = new MiniVentana(actual, true, icono, pt);
+                            ServicioAgregar.this.ven.setVisible(true);
+                        }
+
+                        public void mouseClicked(MouseEvent evt)
+                        {
+                            imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, 4)));
+                        }
+                    });
+
                     label.add(tex);
                 }
             }
