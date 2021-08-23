@@ -1,5 +1,6 @@
 package ventanas;
 
+import clases.Datos;
 import java.awt.AWTException;
 import java.awt.Cursor;
 import java.awt.Image;
@@ -14,8 +15,12 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,14 +38,14 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class ServicioAgregar extends javax.swing.JFrame
 {
-    
+
     protected File carpetaGeneral = null;
     protected File[] lista = null;
     protected ArrayList<File> nombrar = new ArrayList<>();
     protected ArrayList<File> nombrar2 = new ArrayList<>();
     protected ArrayList<String> label = new ArrayList<>();
     protected Hilo nuevo;
-    
+
     private MiniVentana ven;
 
     /**
@@ -50,7 +55,7 @@ public class ServicioAgregar extends javax.swing.JFrame
     {
         initComponents();
         nuevo = new Hilo();
-        
+
     }
 
     /**
@@ -218,7 +223,7 @@ public class ServicioAgregar extends javax.swing.JFrame
 
     private void btnElegirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnElegirActionPerformed
     {//GEN-HEADEREND:event_btnElegirActionPerformed
-        
+
         JFileChooser carpeta = new JFileChooser(Menu.direc);
         carpeta.setDialogTitle("Seleccione la carpeta para trabajar");
         carpeta.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -244,7 +249,7 @@ public class ServicioAgregar extends javax.swing.JFrame
 
     private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnFinalizarActionPerformed
     {//GEN-HEADEREND:event_btnFinalizarActionPerformed
-        
+
         nuevo.interrupt();
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         RenombrarImagenes(nombrar);
@@ -258,7 +263,7 @@ public class ServicioAgregar extends javax.swing.JFrame
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnCrearActionPerformed
     {//GEN-HEADEREND:event_btnCrearActionPerformed
-        
+
         if (carpetaGeneral == null)
         {
             btnElegirActionPerformed(evt);
@@ -276,20 +281,66 @@ public class ServicioAgregar extends javax.swing.JFrame
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnSalirActionPerformed
     {//GEN-HEADEREND:event_btnSalirActionPerformed
-        
-        new Menu().setVisible(true);
-        this.setVisible(false);
+
+        try
+        {
+            String nombre = "Cnfg" + carpetaGeneral.getName();
+            crearArchivo(nombre, carpetaGeneral.getAbsolutePath());
+            guardarData();
+            new Menu().setVisible(true);
+            this.setVisible(false);
+
+        } catch (IOException ex)
+        {
+            Logger.getLogger(ServicioAgregar.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void jMenuFavoritosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jMenuFavoritosActionPerformed
     {//GEN-HEADEREND:event_jMenuFavoritosActionPerformed
 
     }//GEN-LAST:event_jMenuFavoritosActionPerformed
-    
+
+    public File crearArchivo(String nombre, String path) throws IOException
+    {
+        try
+        {
+            File file = new File(path + "\\" + nombre);
+            Path toCreatePath = Paths.get(file.toURI());
+            if (!Files.exists(toCreatePath))
+            {
+                Files.createDirectories(toCreatePath);
+                // Añadimos el atributo a la carpeta
+                Files.setAttribute(file.toPath(), "dos:hidden", true);
+            }
+        } catch (IOException e)
+        {
+
+        } catch (Exception e)
+        {
+            System.out.println("No se encontro archivo");
+        }
+        return null;
+    }
+
+    public void guardarData()
+    {
+        Datos datat = new Datos(nombrar2.get(0).getAbsolutePath(),
+                nombrar2.get(nombrar2.size() - 1).getAbsolutePath());
+        try
+        {
+            String archivo = carpetaGeneral.getAbsolutePath()+"\\Cnfg"+ carpetaGeneral.getName()+"\\data.dat";
+            ObjectOutputStream file1 = new ObjectOutputStream(new FileOutputStream(archivo));
+            file1.writeObject(datat);
+            file1.close();
+        } catch (Exception e)
+        {
+        }
+    }
+
     private String RecortarNombre(String nombre)
     {
         String s = "";
-        
         if (nombre.length() > 15)
         {
             int n = nombre.length() - FilenameUtils.getExtension(nombre).length() - 1;
@@ -298,10 +349,9 @@ public class ServicioAgregar extends javax.swing.JFrame
         {
             s = nombre;
         }
-        
         return s;
     }
-    
+
     protected void RenombrarImagenes(ArrayList<File> obj)
     {
         String s = "";
@@ -329,7 +379,7 @@ public class ServicioAgregar extends javax.swing.JFrame
             nombrar2.add(tmp);
         }
     }
-    
+
     public void Actualizar()
     {
         nuevo.pausar();
@@ -348,9 +398,9 @@ public class ServicioAgregar extends javax.swing.JFrame
                     imagen.setText(tex);
                     imagen.setHorizontalTextPosition(JLabel.CENTER);
                     imagen.setVerticalTextPosition(JLabel.BOTTOM);
-                    
+
                     Panel.add(imagen);
-                    
+
                     imagen.addMouseListener(new MouseAdapter()
                     {
                         public void mouseEntered(MouseEvent evt)
@@ -360,20 +410,20 @@ public class ServicioAgregar extends javax.swing.JFrame
                             ServicioAgregar.this.ven = new MiniVentana(actual, true, icono, pt);
                             ServicioAgregar.this.ven.setVisible(true);
                         }
-                        
+
                         public void mouseClicked(MouseEvent evt)
                         {
                             imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, 4)));
                         }
                     });
-                    
+
                     label.add(tex);
                 }
             }
         }
         Panel.updateUI();
     }
-    
+
     public void Actualizar2()
     {
         Panel.removeAll();
@@ -389,7 +439,7 @@ public class ServicioAgregar extends javax.swing.JFrame
                 imagen.setHorizontalTextPosition(JLabel.CENTER);
                 imagen.setVerticalTextPosition(JLabel.BOTTOM);
                 Panel.add(imagen);
-                
+
                 imagen.addMouseListener(new MouseAdapter()
                 {
                     public void mouseEntered(MouseEvent evt)
@@ -399,18 +449,18 @@ public class ServicioAgregar extends javax.swing.JFrame
                         ServicioAgregar.this.ven = new MiniVentana(actual, true, icono, pt);
                         ServicioAgregar.this.ven.setVisible(true);
                     }
-                    
+
                     public void mouseClicked(MouseEvent evt)
                     {
                         imagen.setIcon(new ImageIcon(icono.getImage().getScaledInstance(100, 100, 4)));
                     }
                 });
-                
+
             }
         }
         Panel.updateUI();
     }
-    
+
     public boolean IsIncluido(String Label)
     {
         if (!label.isEmpty())
@@ -422,23 +472,23 @@ public class ServicioAgregar extends javax.swing.JFrame
         }
         return false;
     }
-    
+
     protected void Notificaciones(String titulo, String mensaje)
     {
         try
         {
             SystemTray tray = SystemTray.getSystemTray();
-            
+
             Image image = Toolkit.getDefaultToolkit().createImage("some-icon.png");
-            
+
             TrayIcon trayicon = new TrayIcon(image, "Java AWT Tray Demo");
-            
+
             trayicon.setImageAutoSize(true);
-            
+
             trayicon.setToolTip("System tray icon demo");
-            
+
             tray.add(trayicon);
-            
+
             trayicon.displayMessage(titulo, mensaje, TrayIcon.MessageType.INFO);
         } catch (AWTException ex)
         {
